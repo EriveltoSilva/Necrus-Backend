@@ -9,8 +9,6 @@ def contact(request):
     return render(request, 'ecommerce/contact.html')
 def detail(request):
     return render(request, 'ecommerce/detail.html')
-def home(request):
-    return render(request, 'ecommerce/home.html')
 def shop(request):
     return render(request, 'ecommerce/shop.html')
 
@@ -20,3 +18,6 @@ def faqs(request):
     return render(request, 'ecommerce/faqs.html')
 def about_us(request):
     return render(request, 'ecommerce/about_us.html')
+
+def home(request):
+    return render(request, 'ecommerce/home.html')
