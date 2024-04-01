@@ -5,13 +5,13 @@ app_name="ecommerce"
 
 urlpatterns = [
     path('', views.home, name="home"),
-    path('checkout-produtos/', views.checkout, name="checkout"),
     path('perguntas-frequentes/', views.faqs, name="faqs"),
     path('sobre-nos/', views.about_us, name="about-us"),
 
     path('meu-carrinho/', views.cart, name="cart"),
     path('contactos/', views.contact, name="contact"),
-    path('produtos/detalhes', views.detail, name="detail"),
-    path('produtos/comprar', views.shop, name="shop"),
-    path('produtos/minha-lista-de-desejos', views.wishlist, name="wishlist"),
+    path('produtos/checkout/', views.checkout, name="checkout"),
+    path('produtos/detalhes/', views.detail, name="detail"),
+    path('produtos/comprar/', views.shop, name="shop"),
+    path('produtos/minha-lista-de-desejos/', views.wishlist, name="wishlist"),
 ]
