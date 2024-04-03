@@ -7,7 +7,7 @@
             <a class="btn d-flex align-items-center justify-content-between bg-primary w-100" data-toggle="collapse" href="#navbar-vertical" style="height: 65px; padding: 0 30px;">
                 <h6 class="text-dark m-0">
                     <i class="bi bi-list mr-2"></i>
-                    Categories
+                    Categorias
                 </h6>
                 <i class="bi bi-chevron-down text-dark"></i>
             </a>
@@ -32,15 +32,13 @@
                     <a href="" class="nav-item nav-link">Jumpsuits</a>
                     <a href="" class="nav-item nav-link">Blazers</a>
                     <a href="" class="nav-item nav-link">Jackets</a>
-                    <a href="" class="nav-item nav-link">Shoes</a>
                 </div>
             </nav>
         </div>
         <div class="col-lg-9">
             <nav class="navbar navbar-expand-lg bg-dark navbar-dark py-3 py-lg-0 px-0">
                 <a href="" class="text-decoration-none d-block d-lg-none">
-                    <span class="h1 text-uppercase text-dark bg-light px-2">Multi</span>
-                    <span class="h1 text-uppercase text-light bg-primary px-2 ml-n1">Shop</span>
+                    <img src="{% static 'assets/img/logo/logo.png' %}" alt=""  height="50">
                 </a>
                 <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
                     <span class="navbar-toggler-icon"></span>
@@ -48,18 +46,18 @@
                 <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                     <div class="navbar-nav mr-auto py-0">
                         <a href="{% url 'ecommerce:home' %}" class="nav-item nav-link active">Home</a>
-                        <a href="{% url 'ecommerce:shop' %}" class="nav-item nav-link">Shop</a>
-                        <a href="{% url 'ecommerce:detail' %}" class="nav-item nav-link">Shop Detail</a>
+                        <a href="{% url 'ecommerce:shop' %}" class="nav-item nav-link">Shopping</a>
+                        <a href="{% url 'ecommerce:detail' %}" class="nav-item nav-link">Detalhe de Produto</a>
                         <div class="nav-item dropdown">
-                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages 
+                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Páginas 
                                 <i class="bi bi-chevron-down mt-1"></i>
                             </a>
                             <div class="dropdown-menu bg-primary rounded-0 border-0 m-0">
-                                <a href="{% url 'ecommerce:cart' %}" class="dropdown-item">Shopping Cart</a>
+                                <a href="{% url 'ecommerce:cart' %}" class="dropdown-item">Carrinho</a>
                                 <a href="{% url 'ecommerce:checkout' %}" class="dropdown-item">Checkout</a>
                             </div>
                         </div>
-                        <a href="{% url 'ecommerce:contact' %}" class="nav-item nav-link">Contact</a>
+                        <a href="{% url 'ecommerce:contact' %}" class="nav-item nav-link">Contactos</a>
                     </div>
                     <div class="navbar-nav ml-auto py-0 d-none d-lg-block">
                         <a href="{% url 'ecommerce:wishlist' %}" class="btn px-0">
