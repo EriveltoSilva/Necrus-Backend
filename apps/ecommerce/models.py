@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-# Create your models here.
+
 class Customer(models.Model):
     user = models.OneToOneField(to=User, on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -46,7 +46,7 @@ class ProductCategory(models.Model):
         return url
 
 class Gender(models.Model):
-    name = models.CharField(max_length=30,  null=False)
+    name = models.CharField(max_length=30,  null=False, unique=True)
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -56,7 +56,7 @@ class Gender(models.Model):
     
 
 class Size(models.Model):
-    name = models.CharField(max_length=5, null=False)
+    name = models.CharField(max_length=5, null=False, unique=True)
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -65,9 +65,8 @@ class Size(models.Model):
         return self.name
 
 class Color(models.Model):
-    name = models.CharField(max_length=20, null=False)
-    description = models.TextField()
-    value_hexadecimal = models.CharField(max_length=7, null=False)
+    name = models.CharField(max_length=20, null=False, unique=True)
+    value_hexadecimal = models.CharField(max_length=7, null=False, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -92,10 +91,10 @@ class Product(models.Model):
     image = models.ImageField(upload_to="products", null=True, blank=True)
 
     category = models.ManyToManyField(to=ProductCategory)
-    gender = models.ManyToManyField(to=Gender)
-    color = models.ManyToManyField(to=Color)
-    size = models.ManyToManyField(to=Size)
-    sale = models.ForeignKey(to=Sale, on_delete=models.CASCADE, null=True)
+    gender = models.ManyToManyField(to=Gender, null=True, blank=True)
+    color = models.ManyToManyField(to=Color, null=True, blank=True)
+    size = models.ManyToManyField(to=Size, null=True, blank=True)
+    sale = models.ForeignKey(to=Sale, on_delete=models.CASCADE, null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -113,7 +112,7 @@ class Product(models.Model):
         return url
     
 class Order(models.Model):
-    customer = models.ForeignKey(to=User, on_delete=models.SET_NULL, null=True)
+    customer = models.ForeignKey(to=Customer, on_delete=models.SET_NULL, null=True)
     complete = models.BooleanField(default=False)
     transaction_id = models.CharField(max_length=100, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -121,7 +120,18 @@ class Order(models.Model):
 
     def __str__(self) -> str:
         return f"{self.id} - {self.customer}"
-
+    
+    @property
+    def get_total_price(self) -> float:
+        order_items = self.orderitem_set.all()
+        total = sum([item.get_total for item in order_items])
+        return total 
+    @property
+    def get_total_items(self) -> int:
+        order_items = self.orderitem_set.all()
+        total = sum([item.quantity for item in order_items])
+        return total
+        
 
     
 class OrderItem(models.Model):
@@ -133,9 +143,13 @@ class OrderItem(models.Model):
 
     def __str__(self) -> str:
         return f"{self.id} - {self.order}"
+    
+    @property
+    def get_total(self) -> float:
+        return self.product.price * self.quantity
 
 class Review(models.Model):
-    user = models.ForeignKey(to=User, on_delete=models.CASCADE)
+    user = models.ForeignKey(to=Customer, on_delete=models.CASCADE)
     comment = models.TextField()
     product = models.ForeignKey(to=Product, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
