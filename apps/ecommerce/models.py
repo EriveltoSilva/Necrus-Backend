@@ -91,9 +91,9 @@ class Product(models.Model):
     image = models.ImageField(upload_to="products", null=True, blank=True)
 
     category = models.ManyToManyField(to=ProductCategory)
-    gender = models.ManyToManyField(to=Gender, null=True, blank=True)
-    color = models.ManyToManyField(to=Color, null=True, blank=True)
-    size = models.ManyToManyField(to=Size, null=True, blank=True)
+    gender = models.ManyToManyField(to=Gender, blank=True)
+    color = models.ManyToManyField(to=Color, blank=True)
+    size = models.ManyToManyField(to=Size, blank=True)
     sale = models.ForeignKey(to=Sale, on_delete=models.CASCADE, null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)

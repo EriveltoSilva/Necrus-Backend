@@ -69,7 +69,9 @@ Home
                                         <i class="bi bi-dash"></i>
                                     </button>
                                 </div>
+
                                 <input type="text" class="form-control form-control-sm bg-secondary border-0 text-center" value="{{item.quantity}}">
+                                
                                 <div class="input-group-btn">
                                     <button class="btn btn-sm btn-primary btn-plus">
                                         <i class="bi bi-plus"></i>
@@ -143,5 +145,5 @@ Home
 
 
 {% block local_scripts %}
-
+<script src="{% static 'assets/ecommerce/js/cart.js' %}"></script>
 {% endblock %}
