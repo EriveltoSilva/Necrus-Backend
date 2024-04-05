@@ -161,7 +161,26 @@ class Product(models.Model):
     
     @property
     def imageURL(self):
-        ...
+        try:
+            images = self.productimage_set.all()
+            url = images[0].image.url
+        except:
+            print("## ERRO CARREGANDO A IMAGEM:", self.name)
+            url = ''
+        return url
+    
+    @property
+    def get_genders(self):
+        return self.genders.all()
+    
+    @property
+    def get_sizes(self):
+        return self.sizes.all()
+    
+    @property
+    def get_colors(self):
+        return self.colors.all()
+    
     def get_absolute_url(self):
         return reverse("ecommerce:detail",args=(self.slug,))
     

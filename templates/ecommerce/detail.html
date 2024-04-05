@@ -29,7 +29,7 @@
     <!-- Breadcrumb End -->
 
 
-    <!-- Shop Detail Start -->
+    <!-- Detalhes do produto  -->
     <div class="container-fluid pb-5">
         <div class="row px-xl-5">
             <div class="col-lg-5 mb-30">
@@ -55,7 +55,7 @@
 
             <div class="col-lg-7 h-auto mb-30">
                 <div class="h-100 bg-light p-30">
-                    <h3>T-shirt Dev</h3>
+                    <h3>{{product.name}}</h3>
                     <div class="d-flex mb-3">
                         <div class="text-primary mr-2">
                             <small class="bi bi-star-fill"></small>
@@ -66,62 +66,38 @@
                         </div>
                         <small class="pt-1">(99 visualizações)</small>
                     </div>
-                    <h3 class="font-weight-semi-bold mb-4">6000kz</h3>
+                    <h3 class="font-weight-semi-bold mb-4">{{product.price|floatformat:2}}kz</h3>
                     <p class="mb-4">
-                        Volup erat ipsum diam elitr rebum et dolor. Est nonumy elitr erat diam stet sit
-                        clita ea. Sanc ipsum et, labore clita lorem magna duo dolor no sea
-                        Nonumy
+                        {{product.description}}
                     </p>
+                    {% if product.sizes %}
                     <div class="d-flex mb-3">
-                        <strong class="text-dark mr-3">Sizes:</strong>
-                        <form>
-                            <div class="custom-control custom-radio custom-control-inline">
-                                <input type="radio" class="custom-control-input" id="size-1" name="size">
-                                <label class="custom-control-label" for="size-1">XS</label>
-                            </div>
-                            <div class="custom-control custom-radio custom-control-inline">
-                                <input type="radio" class="custom-control-input" id="size-2" name="size">
-                                <label class="custom-control-label" for="size-2">S</label>
-                            </div>
-                            <div class="custom-control custom-radio custom-control-inline">
-                                <input type="radio" class="custom-control-input" id="size-3" name="size">
-                                <label class="custom-control-label" for="size-3">M</label>
-                            </div>
-                            <div class="custom-control custom-radio custom-control-inline">
-                                <input type="radio" class="custom-control-input" id="size-4" name="size">
-                                <label class="custom-control-label" for="size-4">L</label>
-                            </div>
-                            <div class="custom-control custom-radio custom-control-inline">
-                                <input type="radio" class="custom-control-input" id="size-5" name="size">
-                                <label class="custom-control-label" for="size-5">XL</label>
-                            </div>
-                        </form>
+                        <strong class="text-dark mr-3">Tamanhos:</strong>
+                        {% for size in product.get_sizes %}
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" class="custom-control-input" id="{{size.name}}" name="size" value="{{size.name}}">
+                            <label class="custom-control-label" for="{{size.name}}">{{size.name}}</label>
+                        </div>
+                        {% empty %}
+                        <p>Sem tamanho para o produto</p>
+                        {% endfor %}
                     </div>
+                    {% endif %}
+
+                    {% if product.colors %}
                     <div class="d-flex mb-4">
-                        <strong class="text-dark mr-3">Colors:</strong>
-                        <form>
-                            <div class="custom-control custom-radio custom-control-inline">
-                                <input type="radio" class="custom-control-input" id="color-1" name="color" checked>
-                                <label class="custom-control-label" for="color-1">Preta</label>
-                            </div>
-                            <div class="custom-control custom-radio custom-control-inline">
-                                <input type="radio" class="custom-control-input" id="color-2" name="color">
-                                <label class="custom-control-label" for="color-2">Branca</label>
-                            </div>
-                            <div class="custom-control custom-radio custom-control-inline">
-                                <input type="radio" class="custom-control-input" id="color-3" name="color">
-                                <label class="custom-control-label" for="color-3">Vermelha</label>
-                            </div>
-                            <div class="custom-control custom-radio custom-control-inline">
-                                <input type="radio" class="custom-control-input" id="color-4" name="color">
-                                <label class="custom-control-label" for="color-4">Azul</label>
-                            </div>
-                            <div class="custom-control custom-radio custom-control-inline">
-                                <input type="radio" class="custom-control-input" id="color-5" name="color">
-                                <label class="custom-control-label" for="color-5">Verde</label>
-                            </div>
-                        </form>
+                        <strong class="text-dark mr-3">Cores:</strong>
+                        {% for color in product.get_colors %}
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" class="custom-control-input" id="{{color.name}}" name="color">
+                            <label class="custom-control-label" for="{{color.name}}">{{color.name}}</label>
+                        </div>
+                        {% empty %}
+                        <p>Não há cores disponiveis para este produto</p> 
+                        {% endfor %}
                     </div>
+                    {% endif %}
+
                     <div class="d-flex align-items-center mb-4 pt-2">
                         <div class="input-group quantity mr-3" style="width: 130px;">
                             <div class="input-group-btn">
@@ -136,9 +112,10 @@
                                 </button>
                             </div>
                         </div>
-                        <button class="btn btn-primary px-3"><i class="bi bi-cart-fill mr-1"></i> 
-                            Adicionar ao
-                            Carrinho</button>
+                        <button class="btn btn-primary px-3">
+                            <i class="bi bi-cart-fill mr-1"></i> 
+                            Adicionar ao Carrinho
+                        </button>
                     </div>
                     <div class="d-flex pt-2">
                         <strong class="text-dark mr-2">Partilhar no:</strong>
@@ -274,24 +251,27 @@
 
     <!-- Products Start -->
     <div class="container-fluid py-5">
-        <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4"><span class="bg-secondary pr-3">You May Also Like</span></h2>
+        <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4">
+            <span class="bg-secondary pr-3">Produtos que você também pode gostar</span>
+        </h2>
         <div class="row px-xl-5">
             <div class="col">
                 <div class="owl-carousel related-carousel">
+                    {% for product in recommend_products %}
                     <div class="product-item bg-light">
                         <div class="product-img position-relative overflow-hidden">
-                            <img class="img-fluid w-100" src="{% static 'assets/img/product-1.jpg' %}" alt="">
+                            <img class="img-fluid w-100" src="{{product.imageURL}}" alt="{{product.name}}">
                             <div class="product-action">
                                 <a class="btn btn-outline-dark btn-square" href=""><i class="bi bi-cart-fill"></i></a>
                                 <a class="btn btn-outline-dark btn-square" href=""><i class="bi bi-heart-fill"></i></a>
-                                <a class="btn btn-outline-dark btn-square" href=""><i class="bi bi-arrow-repeat"></i></a>
-                                <a class="btn btn-outline-dark btn-square" href=""><i class="bi bi-search"></i></a>
+                                <a class="btn btn-outline-dark btn-square" href="{{product.get_absolute_url}}"><i class="bi bi-search"></i></a>
                             </div>
                         </div>
                         <div class="text-center py-4">
-                            <a class="h6 text-decoration-none text-truncate" href="">Product Name Goes Here</a>
+                            <a class="h6 text-decoration-none text-truncate" href="{{product.get_absolute_url}}">{{product.name}}</a>
                             <div class="d-flex align-items-center justify-content-center mt-2">
-                                <h5>$123.00</h5><h6 class="text-muted ml-2"><del>$123.00</del></h6>
+                                <h5>{{product.price}}</h5>
+                                <!-- <h6 class="text-muted ml-2"><del>$123.00</del></h6> -->
                             </div>
                             <div class="d-flex align-items-center justify-content-center mb-1">
                                 <small class="bi bi-star-fill text-primary mr-1"></small>
@@ -303,106 +283,9 @@
                             </div>
                         </div>
                     </div>
-                    <div class="product-item bg-light">
-                        <div class="product-img position-relative overflow-hidden">
-                            <img class="img-fluid w-100" src="{% static 'assets/img/product-2.jpg' %}" alt="">
-                            <div class="product-action">
-                                <a class="btn btn-outline-dark btn-square" href=""><i class="bi bi-cart-fill"></i></a>
-                                <a class="btn btn-outline-dark btn-square" href=""><i class="bi bi-heart-fill"></i></a>
-                                <a class="btn btn-outline-dark btn-square" href=""><i class="bi bi-arrow-repeat"></i></a>
-                                <a class="btn btn-outline-dark btn-square" href=""><i class="bi bi-search"></i></a>
-                            </div>
-                        </div>
-                        <div class="text-center py-4">
-                            <a class="h6 text-decoration-none text-truncate" href="">Product Name Goes Here</a>
-                            <div class="d-flex align-items-center justify-content-center mt-2">
-                                <h5>$123.00</h5><h6 class="text-muted ml-2"><del>$123.00</del></h6>
-                            </div>
-                            <div class="d-flex align-items-center justify-content-center mb-1">
-                                <small class="bi bi-star-fill text-primary mr-1"></small>
-                                <small class="bi bi-star-fill text-primary mr-1"></small>
-                                <small class="bi bi-star-fill text-primary mr-1"></small>
-                                <small class="bi bi-star-fill text-primary mr-1"></small>
-                                <small class="bi bi-star-fill text-primary mr-1"></small>
-                                <small>(99)</small>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="product-item bg-light">
-                        <div class="product-img position-relative overflow-hidden">
-                            <img class="img-fluid w-100" src="{% static 'assets/img/product-3.jpg' %}" alt="">
-                            <div class="product-action">
-                                <a class="btn btn-outline-dark btn-square" href=""><i class="bi bi-cart-fill"></i></a>
-                                <a class="btn btn-outline-dark btn-square" href=""><i class="bi bi-heart-fill"></i></a>
-                                <a class="btn btn-outline-dark btn-square" href=""><i class="bi bi-arrow-repeat"></i></a>
-                                <a class="btn btn-outline-dark btn-square" href=""><i class="bi bi-search"></i></a>
-                            </div>
-                        </div>
-                        <div class="text-center py-4">
-                            <a class="h6 text-decoration-none text-truncate" href="">Product Name Goes Here</a>
-                            <div class="d-flex align-items-center justify-content-center mt-2">
-                                <h5>$123.00</h5><h6 class="text-muted ml-2"><del>$123.00</del></h6>
-                            </div>
-                            <div class="d-flex align-items-center justify-content-center mb-1">
-                                <small class="bi bi-star-fill text-primary mr-1"></small>
-                                <small class="bi bi-star-fill text-primary mr-1"></small>
-                                <small class="bi bi-star-fill text-primary mr-1"></small>
-                                <small class="bi bi-star-fill text-primary mr-1"></small>
-                                <small class="bi bi-star-fill text-primary mr-1"></small>
-                                <small>(99)</small>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="product-item bg-light">
-                        <div class="product-img position-relative overflow-hidden">
-                            <img class="img-fluid w-100" src="{% static 'assets/img/product-4.jpg' %}" alt="">
-                            <div class="product-action">
-                                <a class="btn btn-outline-dark btn-square" href=""><i class="bi bi-cart-fill"></i></a>
-                                <a class="btn btn-outline-dark btn-square" href=""><i class="bi bi-heart-fill"></i></a>
-                                <a class="btn btn-outline-dark btn-square" href=""><i class="bi bi-arrow-repeat"></i></a>
-                                <a class="btn btn-outline-dark btn-square" href=""><i class="bi bi-search"></i></a>
-                            </div>
-                        </div>
-                        <div class="text-center py-4">
-                            <a class="h6 text-decoration-none text-truncate" href="">Product Name Goes Here</a>
-                            <div class="d-flex align-items-center justify-content-center mt-2">
-                                <h5>$123.00</h5><h6 class="text-muted ml-2"><del>$123.00</del></h6>
-                            </div>
-                            <div class="d-flex align-items-center justify-content-center mb-1">
-                                <small class="bi bi-star-fill text-primary mr-1"></small>
-                                <small class="bi bi-star-fill text-primary mr-1"></small>
-                                <small class="bi bi-star-fill text-primary mr-1"></small>
-                                <small class="bi bi-star-fill text-primary mr-1"></small>
-                                <small class="bi bi-star-fill text-primary mr-1"></small>
-                                <small>(99)</small>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="product-item bg-light">
-                        <div class="product-img position-relative overflow-hidden">
-                            <img class="img-fluid w-100" src="{% static 'assets/img/product-5.jpg' %}" alt="">
-                            <div class="product-action">
-                                <a class="btn btn-outline-dark btn-square" href=""><i class="bi bi-cart-fill"></i></a>
-                                <a class="btn btn-outline-dark btn-square" href=""><i class="bi bi-heart-fill"></i></a>
-                                <a class="btn btn-outline-dark btn-square" href=""><i class="bi bi-arrow-repeat"></i></a>
-                                <a class="btn btn-outline-dark btn-square" href=""><i class="bi bi-search"></i></a>
-                            </div>
-                        </div>
-                        <div class="text-center py-4">
-                            <a class="h6 text-decoration-none text-truncate" href="">Product Name Goes Here</a>
-                            <div class="d-flex align-items-center justify-content-center mt-2">
-                                <h5>$123.00</h5><h6 class="text-muted ml-2"><del>$123.00</del></h6>
-                            </div>
-                            <div class="d-flex align-items-center justify-content-center mb-1">
-                                <small class="bi bi-star-fill text-primary mr-1"></small>
-                                <small class="bi bi-star-fill text-primary mr-1"></small>
-                                <small class="bi bi-star-fill text-primary mr-1"></small>
-                                <small class="bi bi-star-fill text-primary mr-1"></small>
-                                <small class="bi bi-star-fill text-primary mr-1"></small>
-                                <small>(99)</small>
-                            </div>
-                        </div>
-                    </div>
+                    {% empty %}
+                    <p>Não há produtos recentes</p>
+                    {% endfor %}
                 </div>
             </div>
         </div>

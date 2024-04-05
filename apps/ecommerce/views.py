@@ -48,7 +48,8 @@ def cart(request):
 def detail(request, slug):
     product = get_object_or_404(Product, slug=slug)
     product_images = product.productimage_set.all()
-    return render(request, 'ecommerce/detail.html', {"product":product, "product_images":product_images})
+    recommend_products = Product.objects.filter(is_published=True)
+    return render(request, 'ecommerce/detail.html', {"product":product, "product_images":product_images, "recommend_products":recommend_products})
 
 
 def home(request):
