@@ -145,11 +145,15 @@
                 <div class="product-img position-relative overflow-hidden">
                     <img class="img-fluid w-100" src="{{ product.imageURL }}" alt="">
                     <div class="product-action">
-                        <a class="btn btn-outline-dark btn-square" href=""><i class="bi bi-cart-fill"></i></a>
-                        <a class="btn btn-outline-dark btn-square" href=""><i class="bi bi-heart-fill"></i></a>
-                        <!-- <a class="btn btn-outline-dark btn-square" href=""><i class="bi bi-arrow-repeat"></i></a> -->
-                        <a class="btn btn-outline-dark btn-square" href="{{product.get_absolute_url}}"><i
-                                class="bi bi-search"></i></a>
+                        <a href="" class="btn btn-outline-dark btn-square" title="Adicionar ao Carrinho">
+                            <i class="bi bi-cart-fill"></i>
+                        </a>
+                        <a href="" class="btn btn-outline-dark btn-square" title="Adicionar aos favoritos">
+                            <i class="bi bi-heart-fill"></i>
+                        </a>
+                        <a href="{{product.get_absolute_url}}" class="btn btn-outline-dark btn-square" title="Ver Detalhes">
+                            <i class="bi bi-search"></i>
+                        </a>
                     </div>
                 </div>
                 <div class="text-center py-4">
@@ -220,14 +224,13 @@
                 <div class="product-img position-relative overflow-hidden">
                     <img class="img-fluid w-100" src="{{product.imageURL}}" alt="Necrus - {{product.name}}">
                     <div class="product-action">
-                        <a class="btn btn-outline-dark btn-square" href="" title="Adicionar ao carrinho">
+                        <a href="" class="btn btn-outline-dark btn-square" title="Adicionar ao carrinho">
                             <i class="bi bi-cart-fill"></i>
                         </a>
-                        <a class="btn btn-outline-dark btn-square" href="" title="Adicionar aos favoritos">
+                        <a href="" class="btn btn-outline-dark btn-square" title="Adicionar aos favoritos">
                             <i class="bi bi-heart-fill"></i>
                         </a>
-                        <a class="btn btn-outline-dark btn-square" href="{{product.get_absolute_url}}"
-                            title="Detalhes do Produto">
+                        <a href="{{product.get_absolute_url}}" class="btn btn-outline-dark btn-square" title="Detalhes do Produto">
                             <i class="bi bi-search"></i>
                         </a>
                     </div>
