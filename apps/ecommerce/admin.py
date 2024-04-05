@@ -87,6 +87,14 @@ class ProductAdmin(admin.ModelAdmin):
 admin.site.register(Product,ProductAdmin)
 
 
+class ProductImageAdmin(admin.ModelAdmin):
+   list_display = ['id','product', 'created_at']
+   list_display_links = ['id','product', 'created_at']
+   search_fields = ['created_at']
+   list_per_page = 20
+admin.site.register(ProductImage, ProductImageAdmin)
+
+
 class OrderAdmin(admin.ModelAdmin):
    list_display = ['id','customer', 'complete','transaction_id', 'created_at']
    list_display_links = ['id','customer','transaction_id', 'created_at']

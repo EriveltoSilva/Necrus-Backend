@@ -139,20 +139,15 @@ class ProductCategory(models.Model):
             print("## ERRO CARREGANDO A IMAGEM da CATEGORIA:", self.name)
             url=''
         return url
-
-
-    
-
     
 class Product(models.Model):
     name = models.CharField(max_length=200, unique=True)
     slug = models.SlugField(unique=True)
     price = models.FloatField()
-    image = models.ImageField(upload_to="products", null=True, blank=True)
-    category = models.ManyToManyField(to=ProductCategory)
-    gender = models.ManyToManyField(to=Gender, blank=True)
-    color = models.ManyToManyField(to=Color, blank=True)
-    size = models.ManyToManyField(to=Size, blank=True)
+    categories = models.ManyToManyField(to=ProductCategory)
+    genders = models.ManyToManyField(to=Gender, blank=True)
+    colors = models.ManyToManyField(to=Color, blank=True)
+    sizes = models.ManyToManyField(to=Size, blank=True)
     sale = models.ForeignKey(to=Sale, on_delete=models.SET_NULL, null=True, blank=True)
     is_published = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -164,10 +159,22 @@ class Product(models.Model):
     def __str__(self) -> str:
         return self.name
     
-
+    @property
+    def imageURL(self):
+        ...
     def get_absolute_url(self):
         return reverse("ecommerce:detail",args=(self.slug,))
-        
+    
+
+class ProductImage(models.Model):
+    product = models.ForeignKey(to=Product, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to="products", null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self) -> str:
+        return f"Imagem de {self.product}"
+    
     @property
     def imageURL(self):
         try:
@@ -176,7 +183,8 @@ class Product(models.Model):
             print("## ERRO CARREGANDO A IMAGEM do PRODUCTO:", self.name)
             url=''
         return url
-    
+
+
 class Order(models.Model):
     customer = models.ForeignKey(to=Customer, on_delete=models.SET_NULL, null=True)
     complete = models.BooleanField(default=False)

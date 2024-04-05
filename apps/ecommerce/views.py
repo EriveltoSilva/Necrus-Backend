@@ -1,5 +1,5 @@
 from .models import *
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 
@@ -16,12 +16,12 @@ def faqs(request):
 def about_us(request):
     return render(request, 'ecommerce/about_us.html')
 
-def detail(request, slug):
-    return render(request, 'ecommerce/detail.html')
+
 
 def product_category(request, slug):
     return render(request, 'ecommerce/product-category.html')
 
+# @login_required(login_url="users:login", redirect_field_name="next")
 def checkout(request):
     if request.user.is_authenticated:
         customer = request.user.customer
@@ -44,7 +44,13 @@ def cart(request):
     return render(request, 'ecommerce/cart.html', {"order":order, "items":items})
 
 
-@login_required(login_url="users:login", redirect_field_name="next")
+
+def detail(request, slug):
+    product = get_object_or_404(Product, slug=slug)
+    product_images = product.productimage_set.all()
+    return render(request, 'ecommerce/detail.html', {"product":product, "product_images":product_images})
+
+
 def home(request):
     products = Product.objects.filter(is_published=True)
     recent_products = Product.objects.filter(is_published=True)[0:20]
