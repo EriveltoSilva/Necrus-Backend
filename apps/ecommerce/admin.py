@@ -73,8 +73,7 @@ class ProductCategoryAdmin(admin.ModelAdmin):
    list_editable = ['is_published']
    list_per_page = 20
 
-   
-
+   prepopulated_fields = {"slug":("name",)}
 admin.site.register(ProductCategory, ProductCategoryAdmin)
 
 class ProductAdmin(admin.ModelAdmin):

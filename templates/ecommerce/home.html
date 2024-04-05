@@ -2,10 +2,8 @@
 {% load static %}
 
 {% block metas %}
-<meta
-    content="Necrus, Compra, Produtos, Nerd, Otaku, Anime, Filme, Programador, Frases, Canecas, T-shirts, Personalizado"
-    name="keywords">
-<meta content="Página inicial da Necrus, os melhores produtos Nerd ao melhor preço e perto de si" name="description">
+<meta name="keywords" content="Necrus, Compra, Produtos, Nerd, Otaku, Anime, Filme, Programador, Frases, Canecas, T-shirts, Personalizado">
+<meta name="description" content="Página inicial da Necrus, os melhores produtos Nerd ao melhor preço e perto de si">
 {% endblock %}
 
 {% block title %} Home {% endblock %}
@@ -16,7 +14,7 @@
 <!-- Carousel Start -->
 <div class="container-fluid mb-3">
     <div class="row px-xl-5">
-        <div class="col-12 col-lg-8">
+        <div class="col-12 {% if sales_product %}col-lg-8 {% endif %}">
             <div id="header-carousel" class="carousel slide carousel-fade mb-30 mb-lg-0" data-ride="carousel">
                 <ol class="carousel-indicators">
                     {% for carrocel in carrocels %}
@@ -50,26 +48,22 @@
             </div>
         </div>
 
-
-
+        {% if sales_product %}
         <div class="col-12 col-lg-4">
+            {% for product in sales_product %}
             <div class="product-offer mb-30" style="height: 200px;">
-                <img class="img-fluid" src="{% static 'assets/img/products/identidade-otaku.webp' %}" alt="">
+                <img class="img-fluid" src="{{product.imageURL}}" alt="Promoção de {{product.}} - Necrus">
                 <div class="offer-text">
-                    <h6 class="text-white text-uppercase">Poupe 20%</h6>
-                    <h3 class="text-white mb-3">Ofertas limitadas</h3>
-                    <a href="" class="btn btn-primary">Compre agora</a>
+                    <h6 class="text-white text-uppercase">Poupe até {{product.sale.percentage_value}}%</h6>
+                    <h3 class="text-white mb-3">
+                        Ofertas limitadas
+                    </h3>
+                    <a href="{{product.get_absolute_url}}" class="btn btn-primary">Ver detalhes...</a>
                 </div>
             </div>
-            <div class="product-offer mb-30" style="height: 200px;">
-                <img class="img-fluid" src="{% static 'assets/img/products/personalizacao.webp' %}" alt="">
-                <div class="offer-text">
-                    <h6 class="text-white text-uppercase">Poupe 20%</h6>
-                    <h3 class="text-white mb-3">Ofertas limitadas</h3>
-                    <a href="" class="btn btn-primary">Compre agora</a>
-                </div>
-            </div>
+            {% endfor %}
         </div>
+        {% endif %}
     </div>
 </div>
 <!-- Carousel End -->
@@ -107,8 +101,7 @@
 <!-- Featured End -->
 
 
-<!-- Categories Start -->
-
+<!-- Categorias de produto-->
 <div class="container-fluid pt-5">
     <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4"><span
             class="bg-secondary pr-3">Categorias</span></h2>
@@ -134,10 +127,10 @@
         {% endfor %}
     </div>
 </div>
-<!-- Categories End -->
+<!-- categorias de produto end -->
 
 
-<!-- Products Start -->
+<!-- Os melhores produtos para sí  -->
 <div class="container-fluid pt-5 pb-3">
     <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4">
         <span class="bg-secondary pr-3">
@@ -184,38 +177,37 @@
 
     </div>
 </div>
-<!-- Products End -->
+<!-- Os melhores produtos para sí  end -->
 
 
-<!-- Offer Start -->
+<!-- Produtos do descontos -->
 <div class="container-fluid pt-5 pb-3">
+    <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4">
+        <span class="bg-secondary pr-3">
+            Poupe dinheiro com os nossos descontos
+        </span>
+    </h2>
     <div class="row px-xl-5">
+        {% for product in sales_product %}
         <div class="col-md-6">
             <div class="product-offer mb-30" style="height: 300px;">
-                <img class="img-fluid" src="{% static 'assets/img/offer-1.jpg' %}" alt="">
+                <img class="img-fluid" src="{{product.imageURL}}" alt="Necrus -{{product.name}} ">
                 <div class="offer-text">
-                    <h6 class="text-white text-uppercase">Save 20%</h6>
-                    <h3 class="text-white mb-3">Special Offer</h3>
-                    <a href="" class="btn btn-primary">Shop Now</a>
+                    <h6 class="text-white text-uppercase">Poupe até {{product.sale.percentage_value}}%</h6>
+                    <h3 class="text-white mb-3">Ofertas limitadas</h3>
+                    <a href="{{product.get_absolute_url}}" class="btn btn-primary">Comprar agora</a>
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="product-offer mb-30" style="height: 300px;">
-                <img class="img-fluid" src="{% static 'assets/img/offer-2.jpg' %}" alt="">
-                <div class="offer-text">
-                    <h6 class="text-white text-uppercase">Save 20%</h6>
-                    <h3 class="text-white mb-3">Special Offer</h3>
-                    <a href="" class="btn btn-primary">Shop Now</a>
-                </div>
-            </div>
-        </div>
+        {% empty %}
+        <p>Sem produtos com descontos</p>
+        {% endfor %}
     </div>
 </div>
-<!-- Offer End -->
+<!-- Produtos do descontos -->
 
 
-<!-- Products Start -->
+<!-- Produtos adicionados recentemente -->
 <div class="container-fluid pt-5 pb-3">
     <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4">
         <span class="bg-secondary pr-3">Produtos Recentes</span>
@@ -265,15 +257,15 @@
         {% endfor %}
     </div>
 </div>
-<!-- Products End -->
+<!-- Produtos adicionados recentemente -->
 
 
-<!-- Vendor Start -->
+<!-- Apoiadores e Parceiros -->
 <div class="container-fluid py-5">
     <div class="row px-xl-5">
         <div class="col">
             <div class="owl-carousel vendor-carousel">
-                {% for sup in supporters %}
+                {% for sup in partners %}
                 <div class="bg-light p-4">
                     <img src="{{sup.imageURL}}" alt="Apoiador Necrus - {{sup.name}}">
                 </div>
@@ -284,7 +276,7 @@
         </div>
     </div>
 </div>
-<!-- Vendor End -->
+<!-- Parceiros -->
 
 
 {% endblock %}

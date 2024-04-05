@@ -4,11 +4,10 @@ from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 
 from django.db.models import Count
+from django.utils import timezone
 
 def contact(request):
     return render(request, 'ecommerce/contact.html')
-def shop(request):
-    return render(request, 'ecommerce/shop.html')
 
 def wishlist(request):
     return render(request, 'ecommerce/wishlist.html')
@@ -19,6 +18,9 @@ def about_us(request):
 
 def detail(request, slug):
     return render(request, 'ecommerce/detail.html')
+
+def product_category(request, slug):
+    return render(request, 'ecommerce/product-category.html')
 
 def checkout(request):
     if request.user.is_authenticated:
@@ -47,13 +49,18 @@ def home(request):
     products = Product.objects.filter(is_published=True)
     recent_products = Product.objects.filter(is_published=True)[0:20]
     categories = ProductCategory.objects.filter(is_published=True).annotate(num_products=Count('product'))
-    supporters = Supporter.objects.filter(is_published=True)
+    partners = Supporter.objects.filter(is_published=True)
     carrocels = Carrocel.objects.all()
+    sales_product = Product.objects.filter(
+        is_published=True,  # Ensure products are published
+        sale__isnull=False,  # Only consider products with an associated sale
+    ).filter(sale__expiration_date__gt=timezone.now())[0:2]
     context = {
         "categories":categories,
         "products":products, 
         "recent_products":recent_products, 
-        "supporters":supporters,
-        "carrocels":carrocels
+        "partners":partners,
+        "carrocels":carrocels,
+        "sales_product":sales_product,
     }
     return render(request, 'ecommerce/home.html', context)

@@ -10,9 +10,8 @@ urlpatterns = [
 
     path('meu-carrinho/', views.cart, name="cart"),
     path('contactos/', views.contact, name="contact"),
-    path('produtos/categorias/<int:id>', views.cart, name="product-category"),
     path('produtos/checkout/', views.checkout, name="checkout"),
     path('produtos/detalhes/<slug:slug>/', views.detail, name="detail"),
-    path('produtos/comprar/', views.shop, name="shop"),
+    path('produtos/categorias/<slug:slug>/', views.product_category, name="product-category"),
     path('produtos/minha-lista-de-desejos/', views.wishlist, name="wishlist"),
 ]

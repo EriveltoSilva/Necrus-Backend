@@ -97,7 +97,7 @@ class Sale(models.Model):
     
 class ProductCategory(models.Model):
     name = models.CharField(max_length=200, null=False)
-    # slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True)
     description = models.TextField()
     image = models.ImageField(upload_to="product-categories", null=True, blank=True)
     is_published = models.BooleanField(default=False)
@@ -129,7 +129,7 @@ class Product(models.Model):
     gender = models.ManyToManyField(to=Gender, blank=True)
     color = models.ManyToManyField(to=Color, blank=True)
     size = models.ManyToManyField(to=Size, blank=True)
-    sale = models.ForeignKey(to=Sale, on_delete=models.CASCADE, null=True, blank=True)
+    sale = models.ForeignKey(to=Sale, on_delete=models.SET_NULL, null=True, blank=True)
     is_published = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -229,7 +229,7 @@ class Carrocel(models.Model):
         return f"{self.title}"
     
     def get_absolute_url(self):
-        return reverse("ecommerce:product-category",args=(self.category.id,))
+        return reverse("ecommerce:product-category",args=(self.category.slug,))
 
     @property
     def imageURL(self):
