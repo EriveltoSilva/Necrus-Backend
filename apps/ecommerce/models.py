@@ -11,6 +11,9 @@ class Customer(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
+    class Meta:
+        ordering = ['user']
+
     def __str__(self) -> str:
         return self.get_full_name()
     
@@ -22,6 +25,9 @@ class Employee(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
+    class Meta:
+        ordering = ['user']
+
     def __str__(self) -> str:
         return self.get_full_name()
     
@@ -60,6 +66,9 @@ class Size(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ['name']
+
     def __str__(self) -> str:
         return self.name
 
@@ -70,6 +79,9 @@ class Color(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ['name']
+    
     def __str__(self) -> str:
         return f"{self.name} - {self.value_hexadecimal}"
 
@@ -79,6 +91,9 @@ class Gender(models.Model):
     is_published = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-name']
 
     def __str__(self) -> str:
         return self.name
@@ -92,6 +107,9 @@ class Sale(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
+    class Meta:
+        ordering = ['-created_at']
+
     def __str__(self) -> str:
         return f"{self.percentage_value}"
     
@@ -104,8 +122,14 @@ class ProductCategory(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ['-created_at', 'name','description']
+
     def __str__(self) -> str:
         return f"{self.name}"
+    
+    def get_absolute_url(self):
+        return reverse("ecommerce:product-category",args=(self.slug,))
     
     @property
     def imageURL(self):
@@ -135,7 +159,7 @@ class Product(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ['-created_at', 'name']
     
     def __str__(self) -> str:
         return self.name
