@@ -8,6 +8,7 @@ User = get_user_model()
 
 class Customer(models.Model):
     user = models.OneToOneField(to=User, on_delete=models.SET_NULL, null=True, blank=True)
+    image = models.ImageField(upload_to="clientes", null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -17,8 +18,18 @@ class Customer(models.Model):
     def __str__(self) -> str:
         return self.get_full_name()
     
+
     def get_full_name(self):
         return self.user.get_full_name()
+    
+    @property
+    def imageURL(self):
+        try:
+            url = self.image.url
+        except ValueError as e:
+            print(f'## ERRO CARREGANDO A IMAGEM DA CLASS "{self.__class__.__name__}":', self.get_full_name())
+            url = '/static/assets/img/user.png'
+        return url
 
 class Employee(models.Model):
     user = models.OneToOneField(to=User, on_delete=models.SET_NULL, null=True, blank=True)
@@ -143,7 +154,9 @@ class ProductCategory(models.Model):
 class Product(models.Model):
     name = models.CharField(max_length=200, unique=True)
     slug = models.SlugField(unique=True)
-    price = models.FloatField()
+    price = models.DecimalField(max_digits=20, decimal_places=2)
+    description = models.TextField(default="")
+    additional_information = models.TextField(default="")
     categories = models.ManyToManyField(to=ProductCategory)
     genders = models.ManyToManyField(to=Gender, blank=True)
     colors = models.ManyToManyField(to=Color, blank=True)
@@ -245,11 +258,13 @@ class Review(models.Model):
     user = models.ForeignKey(to=Customer, on_delete=models.CASCADE)
     comment = models.TextField()
     product = models.ForeignKey(to=Product, on_delete=models.CASCADE)
+    is_published = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self) -> str:
-        return f"{self.user}"
+        return self.user
+    
     
 class ShippingAddress(models.Model):
     customer = models.ForeignKey(to=Customer, on_delete=models.SET_NULL, null=True)
