@@ -65,7 +65,7 @@ Home
                         <td class="align-middle">
                             <div class="input-group quantity mx-auto" style="width: 100px;">
                                 <div class="input-group-btn">
-                                    <button class="btn btn-sm btn-primary btn-minus">
+                                    <button data-product="{{item.product.id}}" data-action="remove" class="btn btn-sm btn-primary btn-minus update-cart">
                                         <i class="bi bi-dash"></i>
                                     </button>
                                 </div>
@@ -73,7 +73,7 @@ Home
                                 <input type="text" class="form-control form-control-sm bg-secondary border-0 text-center" value="{{item.quantity}}">
                                 
                                 <div class="input-group-btn">
-                                    <button class="btn btn-sm btn-primary btn-plus">
+                                    <button data-product="{{item.product.id}}" data-action="add" class="btn btn-sm btn-primary btn-plus update-cart">
                                         <i class="bi bi-plus"></i>
                                     </button>
                                 </div>
@@ -145,5 +145,5 @@ Home
 
 
 {% block local_scripts %}
-<script src="{% static 'assets/ecommerce/js/cart.js' %}"></script>
+
 {% endblock %}

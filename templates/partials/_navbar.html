@@ -63,7 +63,7 @@
                         </a>
                         <a href="{% url 'ecommerce:cart' %}" class="btn px-0 ml-3">
                             <i class="bi bi-cart-fill text-primary"></i>
-                            <span class="badge text-secondary border border-secondary rounded-circle" style="padding-bottom: 2px;">0</span>
+                            <span class="badge text-secondary border border-secondary rounded-circle" style="padding-bottom: 2px;">{{order.get_total_items}}</span>
                         </a>
                     </div>
                 </div>

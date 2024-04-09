@@ -1,48 +1,78 @@
+import json
 from .models import *
 from django.utils import timezone
 from django.db.models import Count
 from django.contrib import messages
-from django.http import HttpResponseRedirect
+from django.core.paginator import Paginator
 from django.views.decorators.http import require_POST
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseRedirect, JsonResponse
+
+NUM_PRODUCTS = 16
 
 def contact(request):
-    return render(request, 'ecommerce/contact.html')
+    order, items = __get_order_and_items(request)
+    return render(request, 'ecommerce/contact.html',{"order":order, "items":items, "categories":__get_categories()})
 
 def wishlist(request):
-    return render(request, 'ecommerce/wishlist.html')
+    order, items = __get_order_and_items(request)
+    return render(request, 'ecommerce/wishlist.html',{"order":order, "items":items, "categories":__get_categories()})
 def faqs(request):
-    return render(request, 'ecommerce/faqs.html')
+    order, items = __get_order_and_items(request)
+    return render(request, 'ecommerce/faqs.html',{"order":order, "items":items, "categories":__get_categories()})
 def about_us(request):
-    return render(request, 'ecommerce/about_us.html')
+    order, items = __get_order_and_items(request)
+    return render(request, 'ecommerce/about_us.html',{"order":order, "items":items, "categories":__get_categories()})
 
+def checkout(request):
+    order, items = __get_order_and_items(request)
+    
+    return render(request, 'ecommerce/checkout.html',{"order":order, "items":items, "categories":__get_categories()})
+
+def cart(request):
+    order, items = __get_order_and_items(request)
+    return render(request, 'ecommerce/cart.html', {"order":order, "items":items, "categories":__get_categories()})
+
+
+def update_cart_item(request):
+    data = json.loads(request.body)
+    product_id = data['productId']
+    action = data['action']
+
+    customer = request.user.customer
+    product = Product.objects.get(id=product_id)
+    order, created = Order.objects.get_or_create(customer=customer, complete=False)
+    orderItem, created = OrderItem.objects.get_or_create(order=order, product=product)
+
+    if action == 'add':
+        orderItem.quantity = (orderItem.quantity + 1)
+    elif action == 'remove':
+        orderItem.quantity = (orderItem.quantity - 1)
+    orderItem.save()
+
+    if orderItem.quantity <= 0:
+        orderItem.delete()
+
+    return JsonResponse('Item was added', safe=False)
 
 
 def product_category(request, slug):
-    return render(request, 'ecommerce/product-category.html')
+    category = get_object_or_404(ProductCategory, slug=slug)
+    list_products = category.product_set.all()
+    paginator = Paginator(list_products, NUM_PRODUCTS)
+    products = paginator.get_page(request.GET.get('page'))
+    order, items = __get_order_and_items(request)
+    context={
+        "order":order, 
+        "items":items, 
+        "categories":__get_categories(),
+        "category":category,
+        "products": products
+    }
+    return render(request, 'ecommerce/product-category.html', context)
 
-# @login_required(login_url="users:login", redirect_field_name="next")
-def checkout(request):
-    if request.user.is_authenticated:
-        customer = request.user.customer
-        order, created = Order.objects.get_or_create(customer=customer, complete=False)
-        items = order.orderitem_set.all()
-    else:
-        items = []
-        order = {"get_total_price":0, "get_total_items":0}
-    return render(request, 'ecommerce/checkout.html',{"order":order, "items":items})
 
-# @login_required(login_url="users:login", redirect_field_name="next")
-def cart(request):
-    if request.user.is_authenticated:
-        customer = request.user.customer
-        order, created = Order.objects.get_or_create(customer=customer, complete=False)
-        items = order.orderitem_set.all()
-    else:
-        items = []
-        order = {"get_total_price":0, "get_total_items":0}
-    return render(request, 'ecommerce/cart.html', {"order":order, "items":items})
 
 
 @require_POST
@@ -61,13 +91,16 @@ def detail(request, slug):
     recommend_products = Product.objects.filter(is_published=True)
     reviews = Review.objects.filter(is_published=True, product=product)
     num_reviews = reviews.count()
+    order, items = __get_order_and_items(request)
     context = {
+        "order": order,
+        "items":items,
         "reviews":reviews,
         "num_reviews":num_reviews ,
         "product":product, 
         "product_images":product_images, 
         "recommend_products":recommend_products,
-        "categories":get_categories(),
+        "categories":__get_categories(),
     }
     return render(request, 'ecommerce/detail.html', context)
 
@@ -79,10 +112,13 @@ def home(request):
     carousels = Carrocel.objects.filter(is_published=True)
     sales_product = Product.objects.filter(
         is_published=True, 
-        sale__isnull=False
-    ).filter(sale__expiration_date__gt=timezone.now())[0:2]
+        sale__isnull=False).filter(sale__expiration_date__gt=timezone.now())[0:2]
+    order, items = __get_order_and_items(request)
+
     context = {
-        "categories":get_categories(),
+        "order":order, 
+        "items":items, 
+        "categories":__get_categories(),
         "products":products, 
         "recent_products":recent_products, 
         "partners":partners,
@@ -91,5 +127,23 @@ def home(request):
     }
     return render(request, 'ecommerce/home.html', context)
 
-def get_categories():
+
+
+
+
+
+
+
+def __get_order_and_items(request):
+    if request.user.is_authenticated:
+        customer = request.user.customer
+        order, created = Order.objects.get_or_create(customer=customer, complete=False)
+        items = order.get_cart_items
+    else:
+        items = []
+        order = {"get_total_price":0, "get_total_items":0, "get_num_items":0}
+    return (order, items)
+
+
+def __get_categories():
     return ProductCategory.objects.filter(is_published=True).annotate(num_products=Count('product'))

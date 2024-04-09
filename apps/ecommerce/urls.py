@@ -17,4 +17,6 @@ urlpatterns = [
 
 
     path('produtos/avaliacoes/', views.review_create, name="review-create"),
+    path('produtos/actualizaar-carrinho/', views.update_cart_item, name="update-cart-item"),
+
 ]
