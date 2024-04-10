@@ -19,6 +19,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'apps.api.apps.ApiConfig',
     'apps.ecommerce.apps.EcommerceConfig',
 
     #Libraries installed
