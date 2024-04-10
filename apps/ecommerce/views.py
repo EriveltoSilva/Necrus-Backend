@@ -1,4 +1,5 @@
 import json
+import datetime
 from .models import *
 from django.utils import timezone
 from django.db.models import Count
@@ -27,7 +28,7 @@ def about_us(request):
 
 def checkout(request):
     order, items = __get_order_and_items(request)
-    
+
     return render(request, 'ecommerce/checkout.html',{"order":order, "items":items, "categories":__get_categories()})
 
 def cart(request):
@@ -35,6 +36,25 @@ def cart(request):
     return render(request, 'ecommerce/cart.html', {"order":order, "items":items, "categories":__get_categories()})
 
 
+@require_POST
+def processOrder(request):
+    transaction_id = datetime.datetime.now().timestamp()
+    data = json.loads(request.body)
+
+    if request.user.is_authenticated:
+        customer = request.user.customer
+        order, created = Order.objects.get_or_create(customer=customer, complete=False)
+        order.transaction_id = transaction_id
+        order.complete = True
+        order.save()
+
+    else:
+        print("Usuário não logado")
+        return JsonResponse({"status":"sucess", "message":"", "data":[]})
+    return JsonResponse({"status":"error", "message": "Usuário não logado no sistema!", "data":[]})
+
+
+@require_POST
 def update_cart_item(request):
     data = json.loads(request.body)
     product_id = data['productId']
@@ -140,8 +160,17 @@ def __get_order_and_items(request):
         order, created = Order.objects.get_or_create(customer=customer, complete=False)
         items = order.get_cart_items
     else:
+        cart = json.loads(request.COOKIES['cart']) if 'cart' in request.COOKIES else {}        
         items = []
-        order = {"get_total_price":0, "get_total_items":0, "get_num_items":0}
+        
+        order = {"get_total_price":0, "get_total_items":0}
+        for item in cart:
+            order["get_total_items"] += cart[item]['quantity']
+            product = Product.objects.get(id=item)
+            order["get_total_price"] += (product.price * cart[item]['quantity'])
+
+        
+        
     return (order, items)
 
 
