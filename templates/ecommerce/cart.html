@@ -51,7 +51,7 @@ Home
                     {% for item in items %}
                     <tr>
                         <td class="align-middle">
-                            <img src="{{item.product.imageURL}}" alt="Necrus {{item.product.name}}" style="width: 50px;">
+                            <img src="{{item.product.get_imageURL}}" alt="Necrus {{item.product.name}}" style="width: 50px;">
                         </td>
 
                         <td class="text-start">
@@ -59,7 +59,7 @@ Home
                         </td>
 
                         <td class="align-middle">
-                            {{item.product.price|floatformat:2}}
+                            {{item.product.price}}kz
                         </td>
                         
                         <td class="align-middle">

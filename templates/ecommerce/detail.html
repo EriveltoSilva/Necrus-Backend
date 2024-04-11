@@ -37,7 +37,7 @@
                 <div class="carousel-inner bg-light">
                     {% for image in product_images %}
                     <div class="carousel-item">
-                        <img class="w-100 h-100" src="{{image.imageURL}}" alt="image.product.name">
+                        <img class="w-100 h-100" src="{{image.get_imageURL}}" alt="image.product.name">
                     </div>
                     {% empty %}
                     <p>Não há imagens para este produto</p>
@@ -160,7 +160,7 @@
                                 <h4 class="mb-4">{{num_reviews}} avaliação para a "{{product.name}}"</h4>
                                 {% for review in reviews %}
                                 <div class="media mb-4">
-                                    <img src="{{review.user.imageURL}}" alt="{{review.user.get_absolute_url}}" class="img-fluid mr-3 mt-1" style="width: 45px;">
+                                    <img src="{{review.user.get_imageURL}}" alt="{{review.user.get_absolute_url}}" class="img-fluid mr-3 mt-1" style="width: 45px;">
                                     <div class="media-body">
                                         <h6>{{review.user.get_full_name}}<small> - <i>{{review.created_at}}</i></small></h6>
                                         <div class="text-primary mb-2">
@@ -224,7 +224,7 @@
                 {% for product in recommend_products %}
                 <div class="product-item bg-light">
                     <div class="product-img position-relative overflow-hidden">
-                        <img class="img-fluid w-100" src="{{product.imageURL}}" alt="{{product.name}}">
+                        <img class="img-fluid w-100" src="{{product.get_imageURL}}" alt="{{product.name}}">
                         <div class="product-action">
                             <a class="btn btn-outline-dark btn-square" href=""><i class="bi bi-cart-fill"></i></a>
                             <a class="btn btn-outline-dark btn-square" href=""><i class="bi bi-heart-fill"></i></a>

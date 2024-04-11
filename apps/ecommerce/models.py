@@ -23,6 +23,7 @@ PRODUCT_REVIEW_RATING = (
 
 
 # class Customer(models.Model):
+#     id = models.UUIDField(primary_key=True,default=uuid.uuid4, unique=True, editable=False)
 #     user = models.OneToOneField(to=User, on_delete=models.SET_NULL, null=True, blank=True)
 #     image = models.ImageField(upload_to="clientes", null=True, blank=True)
 #     created_at = models.DateTimeField(auto_now_add=True)
@@ -50,6 +51,7 @@ PRODUCT_REVIEW_RATING = (
 
 
 # class Employee(models.Model):
+#     id = models.UUIDField(primary_key=True,default=uuid.uuid4, unique=True, editable=False)
 #     user = models.OneToOneField(to=User, on_delete=models.SET_NULL, null=True, blank=True)
 #     image = models.ImageField(upload_to="employees", null=True, blank=True)
 #     created_at = models.DateTimeField(auto_now_add=True)
@@ -67,6 +69,7 @@ PRODUCT_REVIEW_RATING = (
 
 ######################################################## Size, Color, Gender ##################################################################################### 
 # class Size(models.Model):
+#     id = models.UUIDField(primary_key=True,default=uuid.uuid4, unique=True, editable=False)
 #     name = models.CharField(max_length=5, null=False, unique=True)
 #     description = models.TextField()
 #     is_published = models.BooleanField(default=False)
@@ -81,6 +84,7 @@ PRODUCT_REVIEW_RATING = (
 #         return self.name
 
 # class Color(models.Model):
+#     id = models.UUIDField(primary_key=True,default=uuid.uuid4, unique=True, editable=False)
 #     name = models.CharField(max_length=20, null=False, unique=True)
 #     value_hexadecimal = models.CharField(max_length=7, null=False, unique=True)
 #     is_published = models.BooleanField(default=False)
@@ -95,6 +99,7 @@ PRODUCT_REVIEW_RATING = (
 #         return f"{self.name} - {self.value_hexadecimal}"
 
 # class Gender(models.Model):
+#     id = models.UUIDField(primary_key=True,default=uuid.uuid4, unique=True, editable=False)
 #     name = models.CharField(max_length=30,  null=False, unique=True)
 #     description = models.TextField()
 #     is_published = models.BooleanField(default=False)
@@ -110,6 +115,7 @@ PRODUCT_REVIEW_RATING = (
     
     
 class Sale(models.Model):
+    id = models.UUIDField(primary_key=True,default=uuid.uuid4, unique=True, editable=False)
     title = models.CharField(max_length=100)
     percentage_value = models.FloatField()
     expiration_date = models.DateTimeField(null=False)
@@ -209,9 +215,10 @@ class Product(models.Model):
         return url
 
 def product_image_directory(instance, filename):
-    return f'products/{instance.title}/{filename}'
+    return f'products/{instance.product.title}/{filename}'
 
 class ProductImage(models.Model):
+    id = models.UUIDField(primary_key=True,default=uuid.uuid4, unique=True, editable=False)
     product = models.ForeignKey(to=Product, on_delete=models.CASCADE)
     image = models.ImageField(upload_to=product_image_directory, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -239,6 +246,7 @@ class ProductImage(models.Model):
 
 ######################################################## Order, OrderItem ##################################################################################### 
 class Order(models.Model):
+    id = models.UUIDField(primary_key=True,default=uuid.uuid4, unique=True, editable=False)
     user = models.ForeignKey(to=User, on_delete=models.SET_NULL, null=True)
     price = models.DecimalField(max_digits=50, decimal_places=2,default="0")
     status = models.CharField(max_length=20, choices=ORDER_STATUS, default="PROCESSANDO")
@@ -277,6 +285,7 @@ class Order(models.Model):
 
     
 class OrderItem(models.Model):
+    id = models.UUIDField(primary_key=True,default=uuid.uuid4, unique=True, editable=False)
     order = models.ForeignKey(to=Order, on_delete=models.CASCADE)
     product = models.ForeignKey(to=Product, on_delete=models.PROTECT, null=True)
     quantity = models.IntegerField(default=0, null=True, blank=True)
@@ -304,6 +313,7 @@ class OrderItem(models.Model):
 
 ######################################################## ProductReview, Wishlist, Address #################################################################################### 
 class ProductReview(models.Model):
+    id = models.UUIDField(primary_key=True,default=uuid.uuid4, unique=True, editable=False)
     user = models.ForeignKey(to=User, on_delete=models.CASCADE)
     product = models.ForeignKey(to=Product, on_delete=models.CASCADE)
     review = models.TextField()
@@ -325,6 +335,7 @@ class ProductReview(models.Model):
     
 
 class Wishlist(models.Model):
+    id = models.UUIDField(primary_key=True,default=uuid.uuid4, unique=True, editable=False)
     user = models.ForeignKey(to=User, on_delete=models.CASCADE)
     product = models.ForeignKey(to=Product, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -339,6 +350,7 @@ class Wishlist(models.Model):
 
 
 class Address(models.Model):
+    id = models.UUIDField(primary_key=True,default=uuid.uuid4, unique=True, editable=False)
     user = models.ForeignKey(to=User, on_delete=models.CASCADE)
     address = models.CharField(max_length=255, null=True)
     status = models.BooleanField(default=False)
@@ -360,6 +372,7 @@ class Address(models.Model):
 
 ######################################################## Partner,Carousel, Address #################################################################################### 
 class Partner(models.Model):
+    id = models.UUIDField(primary_key=True,default=uuid.uuid4, unique=True, editable=False)
     name = models.CharField(max_length=255, unique=True)
     email = models.EmailField(max_length=255, unique=True)
     image = models.ImageField(upload_to="apoiadores", null=True, blank=True)
@@ -383,6 +396,7 @@ class Partner(models.Model):
         return url
     
 class Carousel(models.Model):
+    id = models.UUIDField(primary_key=True,default=uuid.uuid4, unique=True, editable=False)
     title = models.CharField(max_length=255, null=False, blank=False)
     description = models.TextField(default="")
     image = models.ImageField(upload_to="carousel/", blank=True)

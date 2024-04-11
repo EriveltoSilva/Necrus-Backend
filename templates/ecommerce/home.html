@@ -24,7 +24,7 @@
                 <div class="carousel-inner">
                     {% for carrocel in carrocels %}
                     <div class="carousel-item position-relative" style="height: 430px;">
-                        <img class="position-absolute w-100 h-100" src="{{carrocel.imageURL}}"
+                        <img class="position-absolute w-100 h-100" src="{{carrocel.get_imageURL}}"
                             style="object-fit: cover;">
                         <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
                             <div class="p-3" style="max-width: 700px;">
@@ -52,7 +52,7 @@
         <div class="col-12 col-lg-4">
             {% for product in sales_product %}
             <div class="product-offer mb-30" style="height: 200px;">
-                <img class="img-fluid" src="{{product.imageURL}}" alt="Promoção de {{product.}} - Necrus">
+                <img class="img-fluid" src="{{product.get_imageURL}}" alt="Promoção de {{product.}} - Necrus">
                 <div class="offer-text">
                     <h6 class="text-white text-uppercase">Poupe até {{product.sale.percentage_value}}%</h6>
                     <h3 class="text-white mb-3">
@@ -112,7 +112,7 @@
             <a class="text-decoration-none" href="{{category.get_absolute_url}}">
                 <div class="cat-item d-flex align-items-center mb-4">
                     <div class="overflow-hidden" style="width: 100px; height: 100px;">
-                        <img class="img-fluid" src="{{category.imageURL}}"
+                        <img class="img-fluid" src="{{category.get_imageURL}}"
                             alt="Necrus -Categoria de Produto {{category.name}}">
                     </div>
                     <div class="flex-fill pl-3">
@@ -143,7 +143,7 @@
         <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
             <div class="product-item bg-light mb-4">
                 <div class="product-img position-relative overflow-hidden">
-                    <img class="img-fluid w-100" src="{{ product.imageURL }}" alt="Necrus - producto {{product.name}}">
+                    <img class="img-fluid w-100" src="{{ product.get_imageURL }}" alt="Necrus - producto {{product.name}}">
                     <div class="product-action">
 
                         <button data-product="{{product.id}}" data-action="add" class="btn btn-outline-dark btn-square add-cart update-cart" title="Adicionar ao Carrinho">
@@ -196,7 +196,7 @@
         {% for product in sales_product %}
         <div class="col-md-6">
             <div class="product-offer mb-30" style="height: 300px;">
-                <img class="img-fluid" src="{{product.imageURL}}" alt="Necrus -{{product.name}} ">
+                <img class="img-fluid" src="{{product.get_imageURL}}" alt="Necrus -{{product.name}} ">
                 <div class="offer-text">
                     <h6 class="text-white text-uppercase">Poupe até {{product.sale.percentage_value}}%</h6>
                     <h3 class="text-white mb-3">Ofertas limitadas</h3>
@@ -223,7 +223,7 @@
         <div class="col-12 col-sm-6 col-md-4 col-lg-3 pb-1">
             <div class="product-item bg-light mb-4">
                 <div class="product-img position-relative overflow-hidden">
-                    <img class="img-fluid w-100" src="{{product.imageURL}}" alt="Necrus - {{product.name}}">
+                    <img class="img-fluid w-100" src="{{product.get_imageURL}}" alt="Necrus - {{product.name}}">
                     <div class="product-action">
                         <button data-product="{{product.id}}" data-action="add" class="btn btn-outline-dark btn-square update-cart" title="Adicionar ao Carrinho">
                             <i class="bi bi-cart-fill"></i>
@@ -272,7 +272,7 @@
             <div class="owl-carousel vendor-carousel">
                 {% for sup in partners %}
                 <div class="bg-light p-4">
-                    <img src="{{sup.imageURL}}" alt="Apoiador Necrus - {{sup.name}}">
+                    <img src="{{sup.get_imageURL}}" alt="Apoiador Necrus - {{sup.name}}">
                 </div>
                 {% empty %}
                 <p>Sem apoiadores registrados</p>
