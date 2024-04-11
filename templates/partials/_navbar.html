@@ -43,17 +43,18 @@
                 <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                     <div class="navbar-nav mr-auto py-0">
                         <a href="{% url 'ecommerce:home' %}" class="nav-item nav-link active">Home</a>
-                        
+                        <a href="{% url 'ecommerce:new-products' %}" class="nav-item nav-link">Novos Produtos</a>
+                        <a href="{% url 'ecommerce:highlights' %}" class="nav-item nav-link">Destaques</a>
+                        <a href="{% url 'ecommerce:contact' %}" class="nav-item nav-link">Contactos</a>
                         <div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Outras Secções 
                                 <i class="bi bi-chevron-down mt-1"></i>
                             </a>
                             <div class="dropdown-menu bg-primary rounded-0 border-0 m-0">
-                                <a href="{% url 'ecommerce:cart' %}" class="dropdown-item">Carrinho</a>
-                                <a href="{% url 'ecommerce:checkout' %}" class="dropdown-item">Checkout</a>
+                                <a href="{% url 'ecommerce:about-us' %}" class="dropdown-item">Sobre nós</a>
+                                <a href="{% url 'ecommerce:faqs' %}" class="dropdown-item">Faqs</a>
                             </div>
                         </div>
-                        <a href="{% url 'ecommerce:contact' %}" class="nav-item nav-link">Contactos</a>
                     </div>
                     <div class="navbar-nav ml-auto py-0 d-none d-lg-block">
                         <a href="{% url 'ecommerce:wishlist' %}" class="btn px-0">

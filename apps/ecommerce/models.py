@@ -109,20 +109,20 @@ PRODUCT_REVIEW_RATING = (
 #         return self.name
     
     
-# class Sale(models.Model):
-#     name = models.CharField(max_length=100)
-#     percentage_value = models.FloatField()
-#     expiration_date = models.DateTimeField(null=False)
-#     is_published = models.BooleanField(default=False)
-#     created_at = models.DateTimeField(auto_now_add=True)
-#     updated_at = models.DateTimeField(auto_now=True)
+class Sale(models.Model):
+    title = models.CharField(max_length=100)
+    percentage_value = models.FloatField()
+    expiration_date = models.DateTimeField(null=False)
+    is_published = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
-    # class Meta:
-    #     verbose_name_plural="Promoções"
-    #     ordering = ['-created_at']
+    class Meta:
+        verbose_name_plural="Promoções"
+        ordering = ['-created_at']
 
-#     def __str__(self) -> str:
-#         return f"{self.percentage_value}"
+    def __str__(self) -> str:
+        return f"{self.title}-{self.percentage_value}"
 
 ######################################################## ProductCategory, Product, ProductImage ##################################################################################### 
 class ProductCategory(models.Model):
@@ -171,8 +171,7 @@ class Product(models.Model):
     
     price = models.DecimalField(max_digits=15, decimal_places=2)
     old_price = models.DecimalField(max_digits=15, decimal_places=2, default="10000")
-    
-
+    sale = models.ForeignKey(Sale, on_delete=models.SET_NULL, null=True, blank=True)
     in_stock = models.BooleanField(default=True)
     is_published = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -241,7 +240,7 @@ class ProductImage(models.Model):
 ######################################################## Order, OrderItem ##################################################################################### 
 class Order(models.Model):
     user = models.ForeignKey(to=User, on_delete=models.SET_NULL, null=True)
-    price = models.DecimalField(max_digits=50, decimal_places=2)
+    price = models.DecimalField(max_digits=50, decimal_places=2,default="0")
     status = models.CharField(max_length=20, choices=ORDER_STATUS, default="PROCESSANDO")
     paid_status = models.BooleanField(default=False)
     complete = models.BooleanField(default=False)

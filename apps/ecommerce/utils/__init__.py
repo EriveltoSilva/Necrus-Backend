@@ -5,8 +5,8 @@ from ..models import Order, Product, ProductCategory
 
 def get_order_and_items(request):
     if request.user.is_authenticated:
-        customer = request.user.customer
-        order, created = Order.objects.get_or_create(customer=customer, complete=False)
+        user = request.user
+        order, created = Order.objects.get_or_create(user=user, complete=False)
         items = order.get_cart_items
     else:
         cart = json.loads(request.COOKIES['cart']) if 'cart' in request.COOKIES else {}        

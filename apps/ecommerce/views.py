@@ -20,6 +20,15 @@ def contact(request):
 def wishlist(request):
     order, items = get_order_and_items(request)
     return render(request, 'ecommerce/wishlist.html',{"order":order, "items":items, "categories":get_categories()})
+
+def new_produts_list(request):
+    order, items = get_order_and_items(request)
+    return render(request, 'ecommerce/wishlist.html',{"order":order, "items":items, "categories":get_categories()})
+
+def highlights(request):
+    order, items = get_order_and_items(request)
+    return render(request, 'ecommerce/wishlist.html',{"order":order, "items":items, "categories":get_categories()})
+
 def faqs(request):
     order, items = get_order_and_items(request)
     return render(request, 'ecommerce/faqs.html',{"order":order, "items":items, "categories":get_categories()})
@@ -129,11 +138,10 @@ def detail(request, slug):
 def home(request):
     products = Product.objects.filter(is_published=True)
     recent_products = Product.objects.filter(is_published=True)[0:20]
-    partners = Partner.objects.filter(is_published=True)
-    carousels = Carrocel.objects.filter(is_published=True)
-    sales_product = Product.objects.filter(
-        is_published=True, 
-        sale__isnull=False).filter(sale__expiration_date__gt=timezone.now())[0:2]
+    partners = Partner.objects.all()
+    carousels = Carousel.objects.filter(is_published=True)
+    # sales_product = Product.objects.filter(is_published=True, sale__isnull=False).filter(sale__expiration_date__gt=timezone.now())[0:2]
+    sales_product = Product.objects.filter(is_published=True, sale__isnull=False).filter(sale__expiration_date__gt=timezone.now())[0:2]
     order, items = get_order_and_items(request)
 
     context = {

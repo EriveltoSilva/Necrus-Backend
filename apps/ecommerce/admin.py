@@ -25,13 +25,13 @@ from .models import *
 #    list_per_page = 20
 # admin.site.register(Color, ColorAdmin)
 
-# class SaleAdmin(admin.ModelAdmin):
-#    list_display = ['id','name','is_published', 'percentage_value','expiration_date', 'created_at']
-#    list_display_links = ['id','name','percentage_value', 'expiration_date','created_at']
-#    search_fields = ['name', 'percentage_value', 'expiration_date', 'created_at']
-#    list_editable = ['is_published']
-#    list_per_page = 20
-# admin.site.register(Sale, SaleAdmin)
+class SaleAdmin(admin.ModelAdmin):
+   list_display = ['id','title','is_published', 'percentage_value','expiration_date', 'created_at']
+   list_display_links = ['id','title','percentage_value', 'expiration_date','created_at']
+   search_fields = ['title', 'percentage_value', 'expiration_date', 'created_at']
+   list_editable = ['is_published']
+   list_per_page = 20
+admin.site.register(Sale, SaleAdmin)
    
 
 class ProductCategoryAdmin(admin.ModelAdmin):
