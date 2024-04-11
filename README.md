@@ -10,6 +10,8 @@ admin panel
 edit user
 manage orders
 
+Luzia Diogo de Andrade
+
 # 
 dark........:#151626, rgb(21,22, 38 )
 

@@ -129,7 +129,7 @@ def detail(request, slug):
 def home(request):
     products = Product.objects.filter(is_published=True)
     recent_products = Product.objects.filter(is_published=True)[0:20]
-    partners = Supporter.objects.filter(is_published=True)
+    partners = Partner.objects.filter(is_published=True)
     carousels = Carrocel.objects.filter(is_published=True)
     sales_product = Product.objects.filter(
         is_published=True, 
