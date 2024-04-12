@@ -11,4 +11,6 @@ router.register('categorias', views.ProductCategoryViewSet, basename='Categorias
 
 urlpatterns = [
     path('api/', include(router.urls)),
+    path('api/produtos/categoria/<uuid:pk>', views.ProductsByCategoryList.as_view()),
+    
 ]
