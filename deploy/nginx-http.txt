@@ -1,0 +1,169 @@
+# https://www.nginx.com/blog/using-free-ssltls-certificates-from-lets-encrypt-with-nginx/
+
+
+# REPLACES
+# 77.37.126.92 = Replace with your domain
+# /home/otlevire/website-pca = Replace with the path to the folder for the project
+# /home/otlevire/website-pca/static = Replace with the path to the folder for static files
+# /home/otlevire/website-pca/media = Replace with the path to the folder for media files
+# gunicorn_websitepca.socket = Replace with your unix socket name
+
+
+
+# Set timezone
+# List - timedatectl list-timezones
+sudo timedatectl set-timezone America/Sao_Paulo
+
+# Criando arquivo para configurar nginx
+sudo nano  /etc/nginx/sites-available/website-pca.conf
+
+# Conteúdo do arquivo
+# HTTP
+server {
+  listen 80;
+  listen [::]:80;
+  server_name 77.37.126.92;
+
+  client_max_body_size 20M;
+
+  # Add index.php to the list if you are using PHP
+  index index.html index.htm index.nginx-debian.html index.php;
+  
+  # ATTENTION: /home/otlevire/website-pca/static
+
+  location /static {
+    autoindex on;
+    alias /home/otlevire/website-pca/static;
+  }
+
+  # ATTENTION: /home/otlevire/website-pca/media
+ 
+  location /media {
+    autoindex on;
+    alias /home/otlevire/website-pca/media;
+  }
+
+  # ATTENTION: gunicorn_websitepca.socket
+  location / {
+    proxy_pass http://unix:/run/gunicorn_websitepca.socket;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection 'upgrade';
+    proxy_set_header Host $host;
+    proxy_cache_bypass $http_upgrade;
+  }
+
+  # deny access to .htaccess files, if Apache's document root
+  # concurs with nginx's one
+  #
+  location ~ /\.ht {
+    deny all;
+  }
+
+  location ~ /\. {
+    access_log off;
+    log_not_found off;
+    deny all;
+  }
+
+  gzip on;
+  gzip_disable "msie6";
+
+  gzip_comp_level 6;
+  gzip_min_length 1100;
+  gzip_buffers 4 32k;
+  gzip_proxied any;
+  gzip_types
+    text/plain
+    text/css
+    text/js
+    text/xml
+    text/javascript
+    application/javascript
+    application/x-javascript
+    application/json
+    application/xml
+    application/rss+xml
+    image/svg+xml;
+
+  access_log off;
+  #access_log  /var/log/nginx/pca.ao-access.log;
+  error_log   /var/log/nginx/pca.ao-error.log;
+}
+
+# Comando para criar o link com o conteudo do arquivo anterior do nginx
+sudo ln -s /etc/nginx/sites-available/website-pca.conf /etc/nginx/sites-enabled/website-pca.conf
+
+
+# Checando se a configuração está OK
+sudo nginx -t
+
+# Restarting
+sudo systemctl restart nginx
+
+# Debugging
+cat /etc/nginx/nginx.conf
+
+
+######################################################################################################################
+
+################################################################################################################################
+# PARA HTTPS (:443)
+# (APENAS SE VOCÊ CONFIGUROU O CERTBOT NO SEU DOMÍNIO)
+server {
+	listen 80;
+	listen [::]:80;
+
+	index index.html index.htm index.nginx-debian.html index.php;
+
+	server_name 77.37.126.92;
+
+	location = /favicon.ico { access_log off; log_not_found off; }
+	location /static/ {
+		root /home/otlevire/website-pca/;
+	}
+
+	location /media {
+		root /home/otlevire/website-pca/;
+	}
+
+	location / {
+		include proxy_params;
+		proxy_pass http://unix:/run/gunicorn_websitepca.socket;
+	}
+
+
+	location ~ /\.ht {
+		deny all;
+	}
+
+	location ~ /\. {
+		access_log off;
+		log_not_found off;
+		deny all;
+	}
+
+	gzip on;
+	gzip_disable "msie6";
+
+	gzip_comp_level 6;
+	gzip_min_length 1100;
+	gzip_buffers 4 32k;
+	gzip_proxied any;
+	gzip_types
+		text/plain
+		text/css
+		text/js
+		text/xml
+		text/javascript
+		application/javascript
+		application/x-javascript
+		application/json
+		application/xml
+		application/rss+xml
+		image/svg+xml;
+
+	  access_log off;
+	#access_log  /var/log/nginx/pca.ao-access.log;
+	error_log   /var/log/nginx/pca.ao-error.log;
+}
