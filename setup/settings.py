@@ -19,6 +19,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    #Project Apps
+    'apps.customer.apps.CustomerConfig',
+    'apps.store.apps.StoreConfig',
+    'apps.userauths.apps.UserauthsConfig',
+    'apps.vendor.apps.VendorConfig',
+
+
     'apps.api.apps.ApiConfig',
     'apps.ecommerce.apps.EcommerceConfig',
 

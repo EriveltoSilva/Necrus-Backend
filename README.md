@@ -26,3 +26,11 @@ normal-green:#32A690, rgb(50, 166, 144)
 Gradient:
 
 #11111F, #26726C, #11111F
+
+
+Os melhores acessórios para a sua casa
+Decore o seu quarta, a sua sala com os melhores efeitos já antes vistos e surpreenda os seus visitantes
+
+
+As melhores roupas a sua espera
+Roupas personalizadas de todos os tamanhos e gostos
