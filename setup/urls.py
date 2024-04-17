@@ -32,7 +32,7 @@ urlpatterns = [
 
 
     # Libraries installed
-    path('', schema_view.with_ui('swagger', cache_timeout=0), name="schema-swagger-ui"), # Documentation
+    path('api/vi/docs/', schema_view.with_ui('swagger', cache_timeout=0), name="schema-swagger-ui"),
     path('api-auth/', include('rest_framework.urls')),
     path("__debug__/", include("debug_toolbar.urls")),
 ]
