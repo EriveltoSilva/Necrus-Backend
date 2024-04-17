@@ -34,3 +34,7 @@ Decore o seu quarta, a sua sala com os melhores efeitos já antes vistos e surpr
 
 As melhores roupas a sua espera
 Roupas personalizadas de todos os tamanhos e gostos
+
+
+# References 
+https://drf-yasg.readthedocs.io/en/stable/
