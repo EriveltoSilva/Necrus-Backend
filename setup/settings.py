@@ -6,8 +6,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv()
 
 
-SECRET_KEY = str(os.getenv("SECRET_KEY"))
-DEBUG = bool(str(os.getenv("DEBUG")))
+SECRET_KEY = os.environ.get("SECRET_KEY", "INSECURE")
+DEBUG = True if os.environ.get("DEBUG") == '1' else False
 ALLOWED_HOSTS = []
 
 
@@ -70,18 +70,13 @@ WSGI_APPLICATION = 'setup.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    'ENGINE': os.environ.get('DATABASE_ENGINE'),
+    'NAME': os.environ.get('DATABASE_NAME'),
+    'USER': os.environ.get('DATABASE_USER'),
+    'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
+    'HOST': os.environ.get('DATABASE_HOST'),
+    'PORT':os.environ.get('DATABASE_PORT'),
     }
-
-    # 'default': {
-    # 'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    # 'NAME': str(os.getenv('DB_NAME')),
-    # 'USER':str(os.getenv('DB_USER')),
-    # 'PASSWORD':str(os.getenv('DB_PASSWORD')),
-    # 'HOST':str(os.getenv('DB_HOST')),
-    # 'PORT':str(os.getenv('DB_PORT')),
-    # }
 }
 
 AUTH_PASSWORD_VALIDATORS = [
