@@ -11,6 +11,7 @@ DEBUG = bool(str(os.getenv("DEBUG")))
 ALLOWED_HOSTS = []
 
 
+
 # Application definition
 INSTALLED_APPS = [
     'jazzmin',
@@ -113,6 +114,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
+AUTH_USER_MODEL = 'userauths.User'
+
+
 # Ficheiros acima de 2MB vão p/ a o TemporaryMemory, baixo p/ o InMemory
 FILE_UPLOAD_MAX_MEMORY_SIZE=2000000
 
@@ -153,3 +157,15 @@ INTERNAL_IPS = [
     "127.0.0.1",
     # ...
 ]
+
+
+# https://django-jazzmin.readthedocs.io/
+JAZZMIN_SETTINGS = {
+    'site_title': "Necrus",
+    'site_header':"Necrus",
+    'site_brand':"Necrus",
+    'welcome_sign':"Seja Bem Vindo a Necrus",
+    'copyright':"Necrus",
+    'show_sidebar':True,
+    'show_ui_builder':True,
+}
