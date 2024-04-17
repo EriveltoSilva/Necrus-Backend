@@ -1,16 +1,15 @@
 from pathlib import Path, os
 from dotenv import load_dotenv
 from django.contrib.messages import constants as messages
+from datetime import timedelta
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv()
 
 
-SECRET_KEY = str(os.getenv("SECRET_KEY"))
-DEBUG = bool(str(os.getenv("DEBUG")))
+SECRET_KEY = os.environ.get("SECRET_KEY", "INSECURE")
+DEBUG = True if os.environ.get("DEBUG") == '1' else False
 ALLOWED_HOSTS = []
-
-
 
 # Application definition
 INSTALLED_APPS = [
@@ -34,7 +33,9 @@ INSTALLED_APPS = [
 
     #Libraries installed
     'rest_framework',
+    'rest_framework_simplejwt.token_blacklist',
     "debug_toolbar",
+    "drf_yasg",
 ]
 
 MIDDLEWARE = [
@@ -70,18 +71,13 @@ WSGI_APPLICATION = 'setup.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    'ENGINE': os.environ.get('DATABASE_ENGINE'),
+    'NAME': os.environ.get('DATABASE_NAME'),
+    'USER': os.environ.get('DATABASE_USER'),
+    'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
+    'HOST': os.environ.get('DATABASE_HOST'),
+    'PORT':os.environ.get('DATABASE_PORT'),
     }
-
-    # 'default': {
-    # 'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    # 'NAME': str(os.getenv('DB_NAME')),
-    # 'USER':str(os.getenv('DB_USER')),
-    # 'PASSWORD':str(os.getenv('DB_PASSWORD')),
-    # 'HOST':str(os.getenv('DB_HOST')),
-    # 'PORT':str(os.getenv('DB_PORT')),
-    # }
 }
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -99,6 +95,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
@@ -107,14 +105,18 @@ TIME_ZONE = 'Africa/Luanda'
 USE_I18N = True
 USE_TZ = True
 
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+############################################### Extra Config ##############################################################
+# Customized User model
+AUTH_USER_MODEL = 'userauths.User'
+
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'local_static')]
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-
-AUTH_USER_MODEL = 'userauths.User'
 
 
 # Ficheiros acima de 2MB vão p/ a o TemporaryMemory, baixo p/ o InMemory
@@ -134,24 +136,8 @@ EMAIL_USE_TLS = str(os.getenv('EMAIL_USE_TLS'))
 EMAIL_PORT = str(os.getenv('EMAIL_PORT'))
 EMAIL_HOST = str(os.getenv('EMAIL_HOST'))
 
-# CKEDITOR_UPLOAD_PATH = 'media-contents/'
-# CKEDITOR_CONFIGS = {
-#     'default':{
-#         'skin': 'moono',
-#         'codeSnippet_theme':'monokai',
-#         'toolbar': 'all',
-#         'extraPlugins' : ','.join(
-#             [
-#                 'codesnippet',
-#                 'widget',
-#                 'dialog'
-#             ]
-#         ),
-#     }
-# }
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
+# django toolbar
 INTERNAL_IPS = [
     # ...
     "127.0.0.1",
@@ -169,3 +155,52 @@ JAZZMIN_SETTINGS = {
     'show_sidebar':True,
     'show_ui_builder':True,
 }
+
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=50),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'UPDATE_LAST_LOGIN': False,
+
+    'ALGORITHM': 'HS256',
+
+    'VERIFYING_KEY': None,
+    'AUDIENCE': None,
+    'ISSUER': None,
+    'JWK_URL': None,
+    'LEEWAY': 0,
+
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+    'USER_AUTHENTICATION_RULE': 'rest_framework_simplejwt.authentication.default_user_authentication_rule',
+
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'TOKEN_TYPE_CLAIM': 'token_type',
+    'TOKEN_USER_CLASS': 'rest_framework_simplejwt.models.TokenUser',
+
+    'JTI_CLAIM': 'jti',
+
+    'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
+    'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
+    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
+}
+
+# CKEDITOR_UPLOAD_PATH = 'media-contents/'
+# CKEDITOR_CONFIGS = {
+#     'default':{
+#         'skin': 'moono',
+#         'codeSnippet_theme':'monokai',
+#         'toolbar': 'all',
+#         'extraPlugins' : ','.join(
+#             [
+#                 'codesnippet',
+#                 'widget',
+#                 'dialog'
+#             ]
+#         ),
+#     }
+# }
