@@ -1,16 +1,10 @@
 from . import views
 from rest_framework import routers
 from django.urls import path, include
+from apps.userauths import views as userauths_views
 
-app_name="api"
-
-router = routers.DefaultRouter()
-
-router.register('produtos', views.ProductViewSet, basename='Produtos')
-router.register('categorias', views.ProductCategoryViewSet, basename='Categorias')
 
 urlpatterns = [
-    path('api/', include(router.urls)),
-    path('api/produtos/categoria/<uuid:pk>', views.ProductsByCategoryList.as_view()),
-    
+    path('user/token/', userauths_views.MyTokenObtainPairView.as_view()),    
+    # path('user/register/', userauths_views.RegisterView.as_view()),    
 ]
