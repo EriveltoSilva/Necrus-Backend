@@ -1,6 +1,7 @@
 import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.db.models.signals import post_save
 
 
 class User(AbstractUser):
@@ -17,18 +18,18 @@ class User(AbstractUser):
     
     def save(self, *args, **kwargs) -> None:
         email_username, _ = self.email.split('@')
-        if self.full_name == "" or self.first_name == None:
-            self.first_name = email_username
+        if self.full_name == "" or self.full_name == None:
+            self.full_name = email_username
         if self.username == "" or self.username == None:
             self.username = email_username
         return super(User, self).save(*args, **kwargs)
 
 class Profile(models.Model):
     pid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
-    # user = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name="profile")
+    user = models.OneToOneField(to=User, on_delete=models.CASCADE, related_name="profile")
     image = models.ImageField(upload_to="profile", default="default/default-user.png", null=True, blank=True)
     full_name = models.CharField(max_length=255, null=False, blank=False)
-    birthday = models.DateField(null=False, blank=False)
+    birthday = models.DateField(null=True, blank=True)
     about = models.TextField(null=True, blank=True)
     gender = models.CharField(max_length=2, null=True, blank=True)
     country = models.CharField(max_length=2, null=True, blank=True)
@@ -42,9 +43,20 @@ class Profile(models.Model):
         verbose_name_plural = "Perfils"
 
     def save(self, *args, **kwargs) -> None:
-        if self.full_name == "" or self.first_name == None:
-            self.first_name = self.user.full_name
+        if self.full_name == "" or self.full_name == None:
+            self.full_name = self.user.full_name
         return super(Profile, self).save(*args, **kwargs)
     
     def __str__(self) -> str:
         return str(self.full_name if self.full_name else self.user.full_name)
+    
+
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.save()
+
+post_save.connect(create_user_profile, sender=User)
+post_save.connect(save_user_profile, sender=User)
