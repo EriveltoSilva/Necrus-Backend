@@ -12,7 +12,7 @@ schema_view =  get_schema_view(
         title="Backend APIs for Necrus E-commerce",
         default_version="v1",
         description="This is a backend of Necrus API",
-        terms_of_service="https://necrus.com/policies",
+        terms_of_service="https://necrus.store/policies",
         contact=openapi.Contact(email="eriveltoclenio@gmail.com"),
         license=openapi.License(name="BSD License"),
     ),
@@ -28,7 +28,7 @@ urlpatterns = [
     # path('', include('apps.store.urls')),
     # path('', include('apps.userauths.urls')),
     # path('', include('apps.vendor.urls')),
-    # path('', include('apps.ecommerce.urls')),
+    path('', include('apps.ecommerce.urls')),
 
 
     # Libraries installed

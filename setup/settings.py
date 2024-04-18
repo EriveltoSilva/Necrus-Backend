@@ -9,7 +9,7 @@ load_dotenv()
 
 SECRET_KEY = os.environ.get("SECRET_KEY", "INSECURE")
 DEBUG = True if os.environ.get("DEBUG") == '1' else False
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 # Application definition
 INSTALLED_APPS = [
