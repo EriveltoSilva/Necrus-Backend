@@ -34,14 +34,18 @@ INSTALLED_APPS = [
     #Libraries installed
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
-    "debug_toolbar",
-    "drf_yasg",
+    'debug_toolbar',
+    'drf_yasg',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
+    ################ Libraries ############################
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    ######################################################
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -110,6 +114,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 ############################################### Extra Config ##############################################################
 # Customized User model
 AUTH_USER_MODEL = 'userauths.User'
+
+CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ORIGIN_WHITELIST = (
+#     'localhost:8000',
+#     '127.0.0.1:9000'
+# )
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'local_static')]
