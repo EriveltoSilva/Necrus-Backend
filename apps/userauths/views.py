@@ -37,7 +37,9 @@ class PasswordResetEmailVerifyView(generics.RetrieveAPIView):
             otp = user.otp
             link = f'http://localhost:5173/create-new-password?otp={otp}&uid64={uidb64}'
 
-            # Send email do user with link            
+            # Send email do user with link 
+            print("#"*100)           
             print('Clique aqui:',link)
+            print("#"*100)           
 
         return user
