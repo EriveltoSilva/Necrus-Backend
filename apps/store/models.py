@@ -5,6 +5,7 @@ from django.utils.text import slugify
 from apps.vendor.models import Vendor
 from apps.userauths.models import User, Profile
 
+# id = models.UUIDField(primary_key=True,default=uuid.uuid4, unique=True, editable=False)
 
 class Category(models.Model):
     cid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
@@ -60,6 +61,7 @@ class Product(models.Model):
     old_price = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
     shipping_amount = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
     stock_quantity = models.PositiveIntegerField(default=1)
+    is_active = models.BooleanField(default=True)
     in_stock = models.BooleanField(default=True)
     status = models.CharField(max_length=30,choices=STATUS, default="PUBLICADO")
     featured = models.BooleanField(default=False)
@@ -96,3 +98,74 @@ class Product(models.Model):
             print("## ERRO CARREGANDO A IMAGEM:", self.__str__())
             url = ''
         return url
+
+
+def product_image_directory(instance, filename):
+    return f'products/{instance.product.title}/{filename}'
+
+class Gallery(models.Model):
+    gid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    product = models.ForeignKey(to=Product, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to=product_image_directory, null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name_plural = "Imagens de Produto"
+        ordering = ['-created_at']
+
+    def __str__(self) -> str:
+        return f"Imagem de {self.product}"
+    
+    @property
+    def get_imageURL(self):
+        try:
+            url = self.image.url
+        except ValueError as e:
+            print("## ERRO CARREGANDO A IMAGEM do PRODUCTO:", self.product)
+            url=''
+        return url
+
+
+class Specification(models.Model):
+    product = models.ForeignKey(to=Product, on_delete=models.CASCADE)
+    title = models.CharField(max_length=100, unique=True)
+    content = models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name_plural = "Especificações de Produto"
+        ordering = ['-created_at']
+
+    def __str__(self) -> str:
+        return f"Espec. de {self.product} - {self.title}"
+
+class Size(models.Model):
+    product = models.ForeignKey(to=Product, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100, unique=True)
+    price = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name_plural = "Tamanhos de Produto"
+        ordering = ['-created_at']
+
+    def __str__(self) -> str:
+        return f"Tam. de {self.product} - {self.name}"
+
+class Color(models.Model):
+    product = models.ForeignKey(to=Product, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100, unique=True)
+    color_code = models.CharField(max_length=100, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name_plural = "Cores de Produto"
+        ordering = ['-created_at']
+
+    def __str__(self) -> str:
+        return f"Tam. de {self.product} - {self.name}"
