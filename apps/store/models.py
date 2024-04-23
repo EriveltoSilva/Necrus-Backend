@@ -58,7 +58,7 @@ class Product(models.Model):
     slug = models.SlugField(unique=True)
     image = models.ImageField(upload_to="products",default='defaults/product.png', null=True, blank=True)
     description = models.TextField(null=True, blank=True)
-    categories = models.ForeignKey(to=Category, on_delete=models.SET_NULL, null=True, blank=True)
+    category = models.ForeignKey(to=Category, on_delete=models.SET_NULL, null=True, blank=True)
     price = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
     old_price = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
     shipping_amount = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
@@ -82,7 +82,7 @@ class Product(models.Model):
         if self.slug == "" or self.slug == None:
             self.slug = slugify(self.title)
 
-        self.rating = self.get_product_rating()
+        self.rating = self.product_rating()
         return super(Product, self).save(*args, **kwargs)
     
     def __str__(self) -> str:
@@ -100,10 +100,24 @@ class Product(models.Model):
             url = ''
         return url
     
-    def get_product_rating(self):
+    def product_rating(self):
         product_rating = Review.objects.filter(product=self).aggregate(avg_rating=models.Avg("rating"))
         return product_rating['avg_rating']
+    
+    def rating_count(self):
+        return Review.objects.filter(product=self).count()
 
+    def gallery(self):
+        return Gallery.objects.filter(product=self)
+    
+    def specification(self):
+        return Specification.objects.filter(product=self)
+    
+    def size(self):
+        return Size.objects.filter(product=self)
+    
+    def color(self):
+        return Color.objects.filter(product=self)
 
 
 def product_image_directory(instance, filename):
