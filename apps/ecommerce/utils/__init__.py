@@ -1,6 +1,6 @@
 import json
 from django.db.models import Count
-from ..models import Order, Product, ProductCategory
+from ..models import Order, Product, Category
 
 
 def get_order_and_items(request):
@@ -34,4 +34,4 @@ def get_order_and_items(request):
 
 
 def get_categories():
-    return ProductCategory.objects.filter(is_published=True).annotate(num_products=Count('product'))
+    return Category.objects.filter(is_published=True).annotate(num_products=Count('product'))

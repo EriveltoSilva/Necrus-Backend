@@ -1,11 +1,9 @@
-from typing import Iterable
 import uuid
 from django.db import models
 from django.urls import reverse
 from django.utils.text import slugify
-from django.contrib.auth import get_user_model
-
-User = get_user_model()
+from apps.userauths.models import User
+from apps.store.models import Product, Category
 
 ORDER_STATUS = (
     ("PROCESSANDO", "PROCESSANDO"),
@@ -114,132 +112,132 @@ PRODUCT_REVIEW_RATING = (
 #         return self.name
     
     
-class Sale(models.Model):
-    id = models.UUIDField(primary_key=True,default=uuid.uuid4, unique=True, editable=False)
-    title = models.CharField(max_length=100)
-    percentage_value = models.FloatField()
-    expiration_date = models.DateTimeField(null=False)
-    is_published = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+# class Sale(models.Model):
+#     id = models.UUIDField(primary_key=True,default=uuid.uuid4, unique=True, editable=False)
+#     title = models.CharField(max_length=100)
+#     percentage_value = models.FloatField()
+#     expiration_date = models.DateTimeField(null=False)
+#     is_published = models.BooleanField(default=False)
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     updated_at = models.DateTimeField(auto_now=True)
     
-    class Meta:
-        verbose_name_plural="Promoções"
-        ordering = ['-created_at']
+#     class Meta:
+#         verbose_name_plural="Promoções"
+#         ordering = ['-created_at']
 
-    def __str__(self) -> str:
-        return f"{self.title}-{self.percentage_value}"
+#     def __str__(self) -> str:
+#         return f"{self.title}-{self.percentage_value}"
 
-######################################################## ProductCategory, Product, ProductImage ##################################################################################### 
-class ProductCategory(models.Model):
-    id = models.UUIDField(primary_key=True,default=uuid.uuid4, unique=True, editable=False)
-    title = models.CharField(max_length=100, null=False)
-    slug = models.SlugField(unique=True)
-    description = models.TextField(null=True, blank=True)
-    image = models.ImageField(upload_to="category", null=True, blank=True)
-    is_published = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+######################################################## Category, Product, ProductImage ##################################################################################### 
+# class Category(models.Model):
+#     id = models.UUIDField(primary_key=True,default=uuid.uuid4, unique=True, editable=False)
+#     title = models.CharField(max_length=100, null=False)
+#     slug = models.SlugField(unique=True)
+#     description = models.TextField(null=True, blank=True)
+#     image = models.ImageField(upload_to="category", null=True, blank=True)
+#     is_published = models.BooleanField(default=False)
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     updated_at = models.DateTimeField(auto_now=True)
 
-    class Meta:
-        verbose_name_plural="Categorias de Produto"
-        ordering = ['-created_at', 'title','description']
+#     class Meta:
+#         verbose_name_plural="Categorias de Produto"
+#         ordering = ['-created_at', 'title','description']
     
-    def save(self, *args, **kwargs) -> None:
-        if not self.slug:
-            self.slug = slugify(self.title)
-        return super().save(*args, **kwargs)
+#     def save(self, *args, **kwargs) -> None:
+#         if not self.slug:
+#             self.slug = slugify(self.title)
+#         return super().save(*args, **kwargs)
     
-    def __str__(self) -> str:
-        return f"{self.title}"
+#     def __str__(self) -> str:
+#         return f"{self.title}"
 
-    def get_absolute_url(self):
-        return reverse("ecommerce:product-category",args=(self.slug,))
+#     def get_absolute_url(self):
+#         return reverse("ecommerce:product-category",args=(self.slug,))
 
-    @property
-    def get_imageURL(self):
-        try:
-            url = self.image.url
-        except ValueError as e:
-            print("## ERRO CARREGANDO A IMAGEM da CATEGORIA:", self.__str__())
-            url = ''
-        return url
+#     @property
+#     def get_imageURL(self):
+#         try:
+#             url = self.image.url
+#         except ValueError as e:
+#             print("## ERRO CARREGANDO A IMAGEM da CATEGORIA:", self.__str__())
+#             url = ''
+#         return url
     
 
 #Nota, fazer signal para old_price antes de salvar o novo preço
-class Product(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, unique=True, editable=False)
-    title = models.CharField(max_length=200, unique=True)
-    slug = models.SlugField(unique=True)
-    description = models.TextField(null=True, blank=True)
-    image = models.ImageField(upload_to="products", null=True, blank=True)
-    categories = models.ManyToManyField(to=ProductCategory)
+# class Product(models.Model):
+#     id = models.UUIDField(primary_key=True, default=uuid.uuid4, unique=True, editable=False)
+#     title = models.CharField(max_length=200, unique=True)
+#     slug = models.SlugField(unique=True)
+#     description = models.TextField(null=True, blank=True)
+#     image = models.ImageField(upload_to="products", null=True, blank=True)
+#     categories = models.ManyToManyField(to=Category)
     
-    price = models.DecimalField(max_digits=15, decimal_places=2)
-    old_price = models.DecimalField(max_digits=15, decimal_places=2, default="10000")
-    sale = models.ForeignKey(Sale, on_delete=models.SET_NULL, null=True, blank=True)
-    in_stock = models.BooleanField(default=True)
-    is_published = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+#     price = models.DecimalField(max_digits=15, decimal_places=2)
+#     old_price = models.DecimalField(max_digits=15, decimal_places=2, default="10000")
+#     sale = models.ForeignKey(Sale, on_delete=models.SET_NULL, null=True, blank=True)
+#     in_stock = models.BooleanField(default=True)
+#     is_published = models.BooleanField(default=False)
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     updated_at = models.DateTimeField(auto_now=True)
 
-    class Meta:
-        # verbose_name="Produto"
-        verbose_name_plural="Produtos"
-        ordering = ['-created_at', 'title','description']
+#     class Meta:
+#         # verbose_name="Produto"
+#         verbose_name_plural="Produtos"
+#         ordering = ['-created_at', 'title','description']
 
-    def save(self, *args, **kwargs) -> None:
-        if not self.slug:
-            self.slug = slugify(self.title)
-        return super().save(*args, **kwargs)
+#     def save(self, *args, **kwargs) -> None:
+#         if not self.slug:
+#             self.slug = slugify(self.title)
+#         return super().save(*args, **kwargs)
     
-    def __str__(self) -> str:
-        return self.title 
+#     def __str__(self) -> str:
+#         return self.title 
     
-    def get_absolute_url(self):
-        return reverse("ecommerce:detail",args=(self.slug,))
+#     def get_absolute_url(self):
+#         return reverse("ecommerce:detail",args=(self.slug,))
     
-    def get_percentage(self):
-        return (self.price/self.old_price)*100
+#     def get_percentage(self):
+#         return (self.price/self.old_price)*100
 
     
-    @property
-    def get_imageURL(self):
-        try:
-            # images = self.productimage_set.all()
-            # url = images[0].image.url
-            url = self.image.url
-        except:
-            print("## ERRO CARREGANDO A IMAGEM:", self.__str__())
-            url = ''
-        return url
+#     @property
+#     def get_imageURL(self):
+#         try:
+#             # images = self.productimage_set.all()
+#             # url = images[0].image.url
+#             url = self.image.url
+#         except:
+#             print("## ERRO CARREGANDO A IMAGEM:", self.__str__())
+#             url = ''
+#         return url
 
-def product_image_directory(instance, filename):
-    return f'products/{instance.product.title}/{filename}'
+# def product_image_directory(instance, filename):
+#     return f'products/{instance.product.title}/{filename}'
 
-class ProductImage(models.Model):
-    id = models.UUIDField(primary_key=True,default=uuid.uuid4, unique=True, editable=False)
-    product = models.ForeignKey(to=Product, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to=product_image_directory, null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+# class ProductImage(models.Model):
+#     id = models.UUIDField(primary_key=True,default=uuid.uuid4, unique=True, editable=False)
+#     product = models.ForeignKey(to=Product, on_delete=models.CASCADE)
+#     image = models.ImageField(upload_to=product_image_directory, null=True, blank=True)
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     updated_at = models.DateTimeField(auto_now=True)
 
-    class Meta:
-        # verbose_name = "Imagens de Produto"
-        verbose_name_plural = "Imagens de Produtos"
-        ordering = ['-created_at']
+#     class Meta:
+#         # verbose_name = "Imagens de Produto"
+#         verbose_name_plural = "Imagens de Produtos"
+#         ordering = ['-created_at']
 
-    def __str__(self) -> str:
-        return f"Imagem de {self.product}"
+#     def __str__(self) -> str:
+#         return f"Imagem de {self.product}"
     
-    @property
-    def get_imageURL(self):
-        try:
-            url = self.image.url
-        except ValueError as e:
-            print("## ERRO CARREGANDO A IMAGEM do PRODUCTO:", self.product)
-            url=''
-        return url
+#     @property
+#     def get_imageURL(self):
+#         try:
+#             url = self.image.url
+#         except ValueError as e:
+#             print("## ERRO CARREGANDO A IMAGEM do PRODUCTO:", self.product)
+#             url=''
+#         return url
 
 
 
@@ -400,7 +398,7 @@ class Carousel(models.Model):
     title = models.CharField(max_length=255, null=False, blank=False)
     description = models.TextField(default="")
     image = models.ImageField(upload_to="carousel/", blank=True)
-    category = models.ForeignKey(to=ProductCategory, on_delete=models.CASCADE)
+    category = models.ForeignKey(to=Category, on_delete=models.CASCADE)
     is_published = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
