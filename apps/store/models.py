@@ -82,9 +82,11 @@ class Product(models.Model):
         if self.slug == "" or self.slug == None:
             self.slug = slugify(self.title)
 
-        self.rating = self.product_rating()
         return super(Product, self).save(*args, **kwargs)
     
+    def update_rating(self) -> None:
+        self.rating = self.product_rating()
+
     def __str__(self) -> str:
         return self.title 
     
@@ -92,7 +94,7 @@ class Product(models.Model):
     #     return reverse("ecommerce:detail",args=(self.slug,))
 
     @property
-    def get_imageURL(self):
+    def get_imageURL(self) -> str:
         try:
             url = self.image.url
         except:
@@ -343,7 +345,7 @@ class Review(models.Model):
 @receiver(post_save, sender=Review)
 def update_product_rating(sender, instance, **kwargs):
     if instance.product:
-        instance.product.save()
+        instance.product.update_rating()
 
 
 class Wishlist(models.Model):
