@@ -31,36 +31,7 @@ class ColorSerializer(serializers.ModelSerializer):
         model = Color
         fields = '__all__'
 
-
-class ProductSerializer(serializers.ModelSerializer):
-    gallery = GallerySerializer(many=True, read_only=True)
-    color = ColorSerializer(many=True, read_only=True)
-    specification = SpecificationSerializer(many=True, read_only=True)
-    size = SizeSerializer(many=True, read_only=True)
-    category = CategorySerializer(read_only=True)
-    vendor = VendorSerializer(read_only=True)
-
-    class Meta:
-        model = Product
-        fields = [
-            'id', 'title', 'slug', 'image','description',
-            'price', 'old_price',
-            'shipping_amount', 'stock_quantity', 'is_active',
-            'in_stock', 'status', 'featured', 'views', 
-            'rating', 'product_rating', 'rating_count',
-            'category','vendor', 'gallery', 'color', 'specification',
-            'size', 'created_at',
-            ]
-
-        def __init__(self, *args, **kwargs) -> None:
-            super(ProductSerializer, self).__init__(*args, **kwargs)
-            request = self.context.get("request")
-            if request and request.method == 'POST':
-                self.Meta.depth = 0
-            else:
-                self.Meta.depth = 3
-            
-                
+                            
 
 class CartSerializer(serializers.ModelSerializer):
     class Meta:
@@ -165,6 +136,36 @@ class CouponSerializer(serializers.ModelSerializer):
     
     def __init__(self, *args, **kwargs) -> None:
             super(CouponSerializer, self).__init__(*args, **kwargs)
+            request = self.context.get("request")
+            if request and request.method == 'POST':
+                self.Meta.depth = 0
+            else:
+                self.Meta.depth = 3
+
+
+class ProductSerializer(serializers.ModelSerializer):
+    gallery = GallerySerializer(many=True, read_only=True)
+    color = ColorSerializer(many=True, read_only=True)
+    specification = SpecificationSerializer(many=True, read_only=True)
+    size = SizeSerializer(many=True, read_only=True)
+    review = ReviewSerializer(many=True, read_only=True)
+    category = CategorySerializer(read_only=True)
+    vendor = VendorSerializer(read_only=True)
+
+    class Meta:
+        model = Product
+        fields = [
+            'id', 'title', 'slug', 'image','description',
+            'price', 'old_price',
+            'shipping_amount', 'stock_quantity', 'is_active',
+            'in_stock', 'status', 'featured', 'views', 
+            'rating', 'product_rating', 'rating_count',
+            'category','vendor', 'gallery', 'color', 'specification',
+            'size', 'created_at', 'review',
+            ]
+
+        def __init__(self, *args, **kwargs) -> None:
+            super(ProductSerializer, self).__init__(*args, **kwargs)
             request = self.context.get("request")
             if request and request.method == 'POST':
                 self.Meta.depth = 0
