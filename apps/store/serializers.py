@@ -37,16 +37,18 @@ class ProductSerializer(serializers.ModelSerializer):
     color = ColorSerializer(many=True, read_only=True)
     specification = SpecificationSerializer(many=True, read_only=True)
     size = SizeSerializer(many=True, read_only=True)
+    category = CategorySerializer(read_only=True)
+    vendor = VendorSerializer(read_only=True)
 
     class Meta:
         model = Product
         fields = [
-            'id', 'title', 'slug', 'description',
-            'category', 'price', 'old_price',
+            'id', 'title', 'slug', 'image','description',
+            'price', 'old_price',
             'shipping_amount', 'stock_quantity', 'is_active',
             'in_stock', 'status', 'featured', 'views', 
             'rating', 'product_rating', 'rating_count',
-            'vendor', 'gallery', 'color', 'specification',
+            'category','vendor', 'gallery', 'color', 'specification',
             'size', 'created_at',
             ]
 
