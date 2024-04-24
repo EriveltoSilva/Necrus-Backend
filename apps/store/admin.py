@@ -1,7 +1,13 @@
 from django.contrib import admin
 from .models import Category, Product, Gallery, Specification, Size, Color, Cart, CartOrder, CartOrderItem
-from .models import ProductFaq, Review, Wishlist,Notification, Coupon
+from .models import ProductFaq, Review, Wishlist,Notification, Coupon, Tax
 
+
+class TaxAdmin(admin.ModelAdmin):
+   list_display = ['id', 'country', 'rate', 'created_at']
+   list_display_links = ['id', 'country', 'rate', 'created_at']
+   list_per_page = 20
+admin.site.register(Tax, TaxAdmin)
 
 class GalleryAdminInline(admin.TabularInline):
    model = Gallery

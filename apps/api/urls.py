@@ -16,5 +16,6 @@ urlpatterns = [
     path('categories/', store_views.CategoryListAPIView.as_view()),    
     path('products/', store_views.ProductListAPIView.as_view()),    
     path('products/detail/<slug:slug>/', store_views.ProductDetailAPIView.as_view()),    
+    path('carrinhos/', store_views.CartAPIView.as_view()),    
 
 ]

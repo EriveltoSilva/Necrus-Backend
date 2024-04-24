@@ -206,6 +206,7 @@ class Cart(models.Model):
     total = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
     country = models.CharField(max_length=100, null=True, blank=True)
     color = models.CharField(max_length=100, null=True, blank=True)
+    size = models.CharField(max_length=100, null=True, blank=True)
     cart_id = models.CharField(max_length=255, null=True, blank=True)
     
     created_at = models.DateTimeField(auto_now_add=True)
@@ -396,3 +397,19 @@ class Coupon(models.Model):
     
     def __str__(self) -> str:
         return f"{self.code}"
+
+class Tax(models.Model):
+    country = models.CharField(max_length=100, null=True, blank=True)
+    rate = models.IntegerField(default=5, help_text="Estes numeros estão em percentagens. Ex: 5%")
+    is_active = models.BooleanField(default=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
+    class Meta:
+        verbose_name_plural = "Taxs"
+        ordering = ['country','-created_at',]
+    
+    def __str__(self) -> str:
+        return f"{self.country} - {self.rate}"
