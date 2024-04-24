@@ -1,15 +1,4 @@
 # Necrus-Store
-Pagination
-Search
-select product
-register to check
-payment integration
-view your account
-leave a review
-admin panel
-edit user
-manage orders
-
 Luzia Diogo de Andrade
 
 # 
