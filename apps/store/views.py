@@ -38,28 +38,22 @@ class CartAPIView(generics.ListCreateAPIView):
 
     def create(self, request, *args, **kwargs):
         payload = request.data
-        product_id = payload['product']
+        product_id = payload['product_id']
         quantity = payload['quantity']
         price = payload['price']
-        sub_total = payload['sub_total']
-        shipping_amount = payload['shipping_amount']
-        service_fee = payload['service_fee']
-        tax_fee = payload['tax_fee']
-        total = payload['total']
-        country = payload['country']
+        country = payload['country'].upper()
         color = payload['color']
         size = payload['size']
         cart_id = payload['cart_id']
-        user_id = payload['user']
-        print(payload)
+        user_id = payload['user_id']
+        shipping_amount = payload['shipping_amount']
         
         product = Product.objects.get(id=product_id)
-        user = User.objects.get(id=user_id) if user_id != "undefined" else None
+        user = None if user_id == "undefined" else User.objects.get(id=user_id)
 
-        tax = Tax.objects.filter(country=country).first()
+        tax = Tax.objects.filter(country__icontains=country).first()
         tax_rate = (tax.rate / 100) if tax else 0
 
-        
         cart = Cart.objects.filter(cart_id=cart_id, product=product).first()
         if not cart:
             cart = Cart()
@@ -67,22 +61,19 @@ class CartAPIView(generics.ListCreateAPIView):
         cart.product = product
         cart.user = user
         cart.quantity = int(quantity)
-        cart.sub_total = float(price * int(quantity))
+        cart.price = price
+        cart.sub_total = Decimal(price) * int(quantity)
         cart.shipping_amount =Decimal(shipping_amount) * int(quantity)
         cart.tax_fee = int(quantity) * Decimal(tax_rate)
         cart.color = color
         cart.size = size
-        cart.country = country
+        cart.country = country.upper()
         cart.cart_id = cart_id
 
         service_fee_percentage = 10 / 100
-        cart.service_fee = service_fee_percentage * cart.sub_total
-        cart.total = Decimal(cart.sub_total) + Decimal(cart.shipping_amount) + Decimal(cart.service_fee) + Decimal(cart.tax_fee)
+        cart.service_fee = Decimal(service_fee_percentage) * cart.sub_total
+        cart.total = cart.sub_total + cart.shipping_amount + cart.service_fee + cart.tax_fee
         cart.save()
-
-        print("#"*100)
-
-
         return Response({"status":"success", "message": "Cart updated success"}, status=status.HTTP_200_OK)
         # return super().create(request, *args, **kwargs)
 

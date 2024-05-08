@@ -195,7 +195,7 @@ class Color(models.Model):
 
 class Cart(models.Model):
     cid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
-    user = models.ForeignKey(to=User, on_delete=models.CASCADE)
+    user = models.ForeignKey(to=User, on_delete=models.SET_NULL, null=True, blank=True)
     product = models.ForeignKey(to=Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=0)
     price = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
