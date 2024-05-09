@@ -217,7 +217,7 @@ class Cart(models.Model):
         ordering = ['-created_at']
     
     def __str__(self) -> str:
-        return f"{self.cart_id} - {self.product}"
+        return f"{self.cart_id} - {self.product} - {self.user}"
     
 class CartOrder(models.Model):
     PAYMENT_STATUS = (

@@ -52,7 +52,7 @@ class CartAdmin(admin.ModelAdmin):
    list_display_links = ['id', 'product', 'quantity','total', 'created_at']
    search_fields = ['product', 'quantity','created_at']
    list_per_page = 20
-admin.site.register(Cart,CartAdmin)
+admin.site.register(Cart)
 
 
 class CartOrderAdmin(admin.ModelAdmin):
