@@ -57,7 +57,7 @@ class CartAPIView(generics.ListCreateAPIView):
         user_id = payload['user_id']
         shipping_amount = payload['shipping_amount']
         
-        product = Product.objects.get(id=product_id)
+        product = Product.objects.filter(id=product_id).first()
         user = None if user_id == "undefined" else User.objects.get(id=user_id)
         print(f"{user}".rjust(100))
         
@@ -123,22 +123,22 @@ class CartDetailView(generics.RetrieveAPIView):
     def get(self, request, *args, **kwargs):
         queryset = self.get_queryset(*args, **kwargs)
 
-        total_shipping = 0.0
-        total_tax = 0.0
+        total_shipping_amount = 0.0
+        total_tax_fee = 0.0
         total_service_fee = 0.0
         total_sub_total = 0.0
         total_total = 0.0
 
         for cart_item in queryset:
-            total_shipping += float(cart_item.shipping_amount)
-            total_tax += float(cart_item.tax_fee)
+            total_shipping_amount += float(cart_item.shipping_amount)
+            total_tax_fee += float(cart_item.tax_fee)
             total_service_fee += float(cart_item.service_fee)
             total_sub_total += float(cart_item.sub_total)
             total_total += round(float(cart_item.total), 2)
 
         data = {
-            'shipping': round(total_shipping, 2),
-            'tax': total_tax,
+            'shipping_amount': round(total_shipping_amount, 2),
+            'tax_fee': total_tax_fee,
             'service_fee': total_service_fee,
             'sub_total': total_sub_total,
             'total': total_total,

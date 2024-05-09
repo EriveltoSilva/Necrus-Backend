@@ -152,7 +152,7 @@ class Gallery(models.Model):
 
 class Specification(models.Model):
     product = models.ForeignKey(to=Product, on_delete=models.CASCADE)
-    title = models.CharField(max_length=100, unique=True)
+    title = models.CharField(max_length=100)
     content = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -166,7 +166,7 @@ class Specification(models.Model):
 
 class Size(models.Model):
     product = models.ForeignKey(to=Product, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=100)
     price = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -180,8 +180,8 @@ class Size(models.Model):
 
 class Color(models.Model):
     product = models.ForeignKey(to=Product, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100, unique=True)
-    color_code = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=100)
+    color_code = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
