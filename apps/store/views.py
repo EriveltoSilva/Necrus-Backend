@@ -164,7 +164,80 @@ class CartItemDeleteAPIView(generics.DestroyAPIView):
             cart = Cart.objects.get(id=item_id, cart_id=cart_id)
 
         return cart
+    
+class CreateOrderAPIView(generics.CreateAPIView):
+    serializer_class = CartOrderSerializer
+    permission_classes = (AllowAny,)
+    queryset = CartOrder.objects.all()
+    
+    def create(self, request, *args, **kwargs):
+        payload = request.data
+        full_name = payload.get('full_name')
+        email = payload.get('email')
+        phone = payload.get('phone')
+        country = payload.get('country')
+        province = payload.get('province')
+        address = payload.get('address')
+        user_id = payload.get('user_id')
+        cart_id = payload.get('cart_id')
+        municipe = payload.get('municipe')
+
+        user = User.objects.get(id=user_id) if user_id != 0 else None
         
+        cart_items = Cart.objects.filter(cart_id=cart_id)
+
+        total_shipping_amount = Decimal(0.00)
+        total_tax_fee = Decimal(0.00)
+        total_service_fee = Decimal(0.00)
+        total_sub_total = Decimal(0.00)
+        total_initial_total = Decimal(0.00)
+        total_total = Decimal(0.00)
+
+        order = CartOrder.objects.create(
+            buyer=user,
+            full_name=full_name,
+            email=email,
+            phone=phone,
+            country=country,
+            province=province,
+            municipe=municipe or '',
+            address=address
+        )
+
+        for item in cart_items:
+            CartOrderItem.objects.create(
+                order=order,
+                product=item.product,
+                vendor=item.product.vendor,
+                quantity=item.quantity,
+                price=item.price,
+                shipping_amount=item.shipping_amount,
+                service_fee=item.service_fee,
+                tax_fee=item.tax_fee,
+                total=item.total,
+                sub_total=item.sub_total,
+                initial_total=item.total,
+                color=item.color,
+                size=item.size,
+            )
+
+            total_shipping_amount += Decimal(item.shipping_amount)
+            total_tax_fee += Decimal(item.tax_fee)
+            total_service_fee += Decimal(item.service_fee)
+            total_sub_total += Decimal(item.sub_total)
+            total_initial_total += Decimal(item.total)
+            total_total += Decimal(item.total)
+            order.vendor.add(item.product.vendor)
+        
+        order.shipping_amount = total_shipping_amount
+        order.tax_fee = total_tax_fee
+        order.service_fee = total_service_fee
+        order.sub_total = total_sub_total
+        order.initial_total = total_initial_total
+        order.total = total_total
+        order.save()
+
+        return Response({"status":"success", "message":"Order Created!", "data":{"order_oid":order.oid}}, status=status.HTTP_201_CREATED)
 
 # # class CartOrderAPIView(generics.ListAPIView):
 #     queryset = CartOrder.objects.all()
