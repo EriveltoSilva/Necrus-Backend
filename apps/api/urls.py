@@ -15,7 +15,9 @@ urlpatterns = [
     # Store Endpoints
     path('categories/', store_views.CategoryListAPIView.as_view()),    
     path('products/', store_views.ProductListAPIView.as_view()),    
-    path('products/detail/<slug:slug>/', store_views.ProductDetailAPIView.as_view()),    
+    path('products/detail/<slug:slug>/', store_views.ProductDetailAPIView.as_view()),
+
+    # Cart Endpoints
     path('cart/', store_views.CartAPIView.as_view()),    
     path('cart-list/<str:cart_id>/<int:user_id>/', store_views.CartListAPIView.as_view()),
     path('cart-list/<str:cart_id>/', store_views.CartListAPIView.as_view()),
@@ -23,6 +25,9 @@ urlpatterns = [
     path('cart-detail/<str:cart_id>/', store_views.CartDetailView.as_view()),
     path('cart-delete/<str:cart_id>/<int:item_id>/<int:user_id>/', store_views.CartItemDeleteAPIView.as_view()),
     path('cart-delete/<str:cart_id>/<int:item_id>/', store_views.CartItemDeleteAPIView.as_view()),
+    
     path('create-order/', store_views.CreateOrderAPIView.as_view()),
+
+    path('checkout/<str:order_oid>/', store_views.CheckoutView.as_view()),
 
 ]

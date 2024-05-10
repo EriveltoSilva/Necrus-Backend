@@ -56,9 +56,9 @@ admin.site.register(Cart)
 
 
 class CartOrderAdmin(admin.ModelAdmin):
-   list_display = ['buyer', 'sub_total','total', 'payment_status', 'order_status', 'province']
+   list_display = ['oid','buyer', 'sub_total','total', 'payment_status', 'order_status', 'province']
    list_display_links = ['buyer', 'sub_total','total', 'payment_status', 'order_status', 'province']
-   search_fields = ['buyer', 'payment_status','order_status','country' ,'province', 'municipe', 'address']
+   search_fields = ['oid','buyer', 'payment_status','order_status','country' ,'province', 'municipe', 'address']
    list_per_page = 20
 admin.site.register(CartOrder,CartOrderAdmin)
 
