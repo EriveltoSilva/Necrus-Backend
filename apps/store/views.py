@@ -178,10 +178,10 @@ class CreateOrderAPIView(generics.CreateAPIView):
         country = payload.get('country')
         province = payload.get('province')
         address = payload.get('address')
-        user_id = payload.get('user_id')
+        user_id = int(payload.get('user_id'))
         cart_id = payload.get('cart_id')
         municipe = payload.get('municipe')
-
+    
         user = User.objects.get(id=user_id) if user_id != 0 else None
         
         cart_items = Cart.objects.filter(cart_id=cart_id)
