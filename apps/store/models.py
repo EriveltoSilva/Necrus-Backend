@@ -191,7 +191,22 @@ class Color(models.Model):
 
     def __str__(self) -> str:
         return f"Tam. de {self.product} - {self.name}"
+
+class Coupon(models.Model):
+    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)
+    user_by = models.ManyToManyField(User, blank=True)
+    code = models.CharField(max_length=255, null=False, blank=False)
+    discount = models.IntegerField(default=1)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name_plural = "Cupons e Promoções"
+        ordering = ['-created_at', 'vendor']
     
+    def __str__(self) -> str:
+        return f"{self.code}"  
 
 class Cart(models.Model):
     cid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
@@ -291,6 +306,7 @@ class CartOrderItem(models.Model):
     size = models.CharField(max_length=100, null=True, blank=True)
 
     # Coupons
+    coupon = models.ManyToManyField(Coupon, blank=True)
     initial_total = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
     saved = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
 
@@ -385,22 +401,6 @@ class Notification(models.Model):
             return f"Notif. {self.order}"
         return f"Notificação {self.id}"
     
-class Coupon(models.Model):
-    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)
-    user_by = models.ManyToManyField(User, blank=True)
-    code = models.CharField(max_length=255, null=False, blank=False)
-    discount = models.IntegerField(default=1)
-
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        verbose_name_plural = "Copons e Promoções"
-        ordering = ['-created_at', 'vendor']
-    
-    def __str__(self) -> str:
-        return f"{self.code}"
-
 class Tax(models.Model):
     country = models.CharField(max_length=100, null=True, blank=True)
     rate = models.IntegerField(default=5, help_text="Estes numeros estão em percentagens. Ex: 5%")

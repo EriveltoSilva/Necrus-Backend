@@ -31,8 +31,6 @@ class ColorSerializer(serializers.ModelSerializer):
         model = Color
         fields = '__all__'
 
-                            
-
 class CartSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cart
@@ -45,7 +43,6 @@ class CartSerializer(serializers.ModelSerializer):
                 self.Meta.depth = 0
             else:
                 self.Meta.depth = 3
-
 
 class CartOrderItemSerializer(serializers.ModelSerializer):
     class Meta:
@@ -74,7 +71,6 @@ class CartOrderSerializer(serializers.ModelSerializer):
             else:
                 self.Meta.depth = 3
 
-
 class ProductFaqSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductFaq
@@ -101,7 +97,6 @@ class ReviewSerializer(serializers.ModelSerializer):
             else:
                 self.Meta.depth = 3
 
-
 class WishlistSerializer(serializers.ModelSerializer):
     class Meta:
         model = Wishlist
@@ -114,8 +109,7 @@ class WishlistSerializer(serializers.ModelSerializer):
                 self.Meta.depth = 0
             else:
                 self.Meta.depth = 3
-
-                
+             
 class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
@@ -129,7 +123,6 @@ class NotificationSerializer(serializers.ModelSerializer):
             else:
                 self.Meta.depth = 3
 
-
 class CouponSerializer(serializers.ModelSerializer):
     class Meta:
         model = Coupon
@@ -142,7 +135,6 @@ class CouponSerializer(serializers.ModelSerializer):
                 self.Meta.depth = 0
             else:
                 self.Meta.depth = 3
-
 
 class ProductSerializer(serializers.ModelSerializer):
     gallery = GallerySerializer(many=True, read_only=True)

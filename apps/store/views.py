@@ -1,15 +1,14 @@
-from django.shortcuts import render
+from decimal import Decimal
 
 from apps.userauths.models import User
-
-from .models import Product, Category, Cart, CartOrder, CartOrderItem, Tax
-from .serializers import ProductSerializer, CategorySerializer, CartSerializer, CartOrderSerializer, CartOrderItemSerializer
-
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
-from decimal import Decimal
+from .models import Product, Category, Cart, CartOrder, CartOrderItem, Tax, Coupon
+from .serializers import ProductSerializer, CategorySerializer, CartSerializer, CartOrderSerializer, CartOrderItemSerializer
+from .serializers import CouponSerializer
+
 
 class CategoryListAPIView(generics.ListAPIView):
     queryset = Category.objects.all()
@@ -24,7 +23,6 @@ class CategoryDetailAPIView(generics.RetrieveAPIView):
     def get_object(self):
         slug = self.kwargs['slug']
         return Category.objects.get(slug=slug)
-
 
 class ProductListAPIView(generics.ListAPIView):
     queryset = Product.objects.filter(is_active=True)
@@ -86,7 +84,6 @@ class CartAPIView(generics.ListCreateAPIView):
         cart.save()
         return Response({"status":"success", "message": "Cart updated success"}, status=status.HTTP_200_OK)
 
-
 class CartListAPIView(generics.ListAPIView):
     serializer_class = CartSerializer
     permission_classes = [AllowAny]
@@ -103,7 +100,6 @@ class CartListAPIView(generics.ListAPIView):
             queryset = Cart.objects.filter(cart_id=cart_id)
         return queryset
     
-
 class CartDetailView(generics.RetrieveAPIView):
     serializer_class = CartSerializer
     permission_classes = [AllowAny]
@@ -145,7 +141,6 @@ class CartDetailView(generics.RetrieveAPIView):
         }
 
         return Response(data, status.HTTP_200_OK)
-
 
 class CartItemDeleteAPIView(generics.DestroyAPIView):
     serializer_class = CartSerializer
@@ -239,7 +234,6 @@ class CreateOrderAPIView(generics.CreateAPIView):
 
         return Response({"status":"success", "message":"Order Created!", "data":{"order_oid":order.oid}}, status=status.HTTP_201_CREATED)
 
-
 class CheckoutView(generics.RetrieveAPIView):
     serializer_class = CartOrderSerializer
     permission_classes = (AllowAny,)
@@ -250,3 +244,44 @@ class CheckoutView(generics.RetrieveAPIView):
         order = CartOrder.objects.get(oid=order_oid)
         return order
 
+class CouponAPIView(generics.ListCreateAPIView):
+    serializer_class = CouponSerializer
+    permission_classes = (AllowAny,)
+    queryset = Coupon.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        payload = request.data
+        order_oid = payload.get('order_oid')
+        coupon_code = payload.get('coupon_code')
+
+        order = CartOrder.objects.get(oid=order_oid)
+
+        try:
+            coupon = Coupon.objects.get(code=coupon_code)
+        except:
+            coupon = None
+
+        if coupon:
+            order_items = CartOrderItem.objects.filter(order=order, vendor=coupon.vendor)
+            if order_items:
+                for item in order_items:
+                    if not coupon in item.coupon.all():
+                        discount = item.total * Decimal(coupon.discount/100)
+                        item.total -= discount
+                        item.sub_total -= discount
+                        item.coupon.add(coupon)
+                        item.saved += discount
+
+                        order.total -= discount
+                        order.sub_total -= discount
+                        order.saved += discount                        
+                        item.save() 
+                        order.save() 
+                    else:
+                        return Response({"status":"info", "message":"Este cupom já foi usado!"}, status=status.HTTP_200_OK)
+                return Response({"status":"success", "message":"Cupom activado com sucesso!"}, status=status.HTTP_200_OK)
+            else:
+                return Response({"status":"info", "message":"Não existem item nesse carrinho!"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"status":"error", "message":"Este cupom não existe!"}, status=status.HTTP_200_OK)
+        
