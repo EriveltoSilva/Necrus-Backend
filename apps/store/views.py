@@ -1,5 +1,4 @@
 from decimal import Decimal
-
 from apps.userauths.models import User
 from rest_framework import generics, status
 from rest_framework.response import Response
@@ -8,6 +7,14 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from .models import Product, Category, Cart, CartOrder, CartOrderItem, Tax, Coupon
 from .serializers import ProductSerializer, CategorySerializer, CartSerializer, CartOrderSerializer, CartOrderItemSerializer
 from .serializers import CouponSerializer
+from django.conf import settings
+from . import utils
+import random
+import math
+from django.shortcuts import redirect
+
+import stripe
+stripe.api_key = "<api-key>"
 
 
 class CategoryListAPIView(generics.ListAPIView):
@@ -284,4 +291,57 @@ class CouponAPIView(generics.ListCreateAPIView):
                 return Response({"status":"info", "message":"Não existem item nesse carrinho!"}, status=status.HTTP_200_OK)
         else:
             return Response({"status":"error", "message":"Este cupom não existe!"}, status=status.HTTP_200_OK)
+
+
+class StripeCheckoutView(generics.CreateAPIView):
+    serializer_class = CartOrderSerializer
+    permission_classes = [AllowAny]
+    queryset = CartOrder.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        order_oid = self.kwargs.get('order_oid')
+        try:
+            order = CartOrder.objects.get(oid=order_oid)
+        except:
+            order = None
+            return Response({"status":"error", "message":"Está ordem de compra não foi encontrada!"}, status=status.HTTP_404_NOT_FOUND)
+
+        # Payment Simulation
+        chance = math.floor(random.random()*2) % 2 
+        utils.print_debug(chance)
+        session_id =utils.generate_session_id()
+        order.stripe_session_id = session_id
+        if chance:
+            # success_url = f'{settings.FRONTEND_SERVER_URL}/checkout/payment-success/{order.oid}?session_id={session_id}',
+            order.payment_status='PAGO'
+            order.save()
+
+            # Send notification do vendor, email do customer, email do vendor
+            return Response({'status':"success", 'data':{'session_id':session_id, 'order_oid':order_oid}})
+        else:
+            # cancel_url= f'{settings.FRONTEND_SERVER_URL}/checkout/payment-failed/{order.oid}?session_id={session_id}'
+            order.payment_status='CANCELADO'
+            order.save()
+            return Response({'status':"error", 'data':{'session_id':session_id, 'order_oid':order_oid}})
         
+        # checkout_session = stripe.checkout.Session.create(
+        #     customer_email = order.email,
+        #     payment_method_types = ['card'],
+        #     line_items = [
+        #         {
+        #             'price_data':{
+        #                 'currency':'usd',
+        #                 'product_data':{
+        #                     'name':order.full_name
+        #                 },
+        #                 'unit_amount':int(order.total*100)
+        #             },
+        #             'quantity':1,
+        #         }
+        #     ],
+        #     mode='payment',
+        #     success_url=f'http://localhost:5173/checkout/payment-success/{order.oid}' + '?session_id={CHECKOUT_SESSION_ID}',
+        #     cancel_url='http://localhost:5173/checkout/payment-failed/?session_id={CHECKOUT_SESSION_ID}',
+        # )
+
+    

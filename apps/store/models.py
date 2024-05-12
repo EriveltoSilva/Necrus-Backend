@@ -255,6 +255,9 @@ class CartOrder(models.Model):
     payment_status = models.CharField(max_length=30, choices=PAYMENT_STATUS, default="PENDENTE")
     order_status = models.CharField(max_length=20, choices=ORDER_STATUS, default="PENDENTE")
 
+    #Stripe
+    stripe_session_id = models.CharField(max_length=255, null=True, blank=True)
+    
     # Coupons
     initial_total = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
     saved = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
