@@ -1,7 +1,8 @@
-from pathlib import Path, os
+import os
+from pathlib import Path
 from dotenv import load_dotenv
-from django.contrib.messages import constants as messages
 from datetime import timedelta
+from django.contrib.messages import constants as messages
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv()
@@ -10,6 +11,7 @@ load_dotenv()
 SECRET_KEY = os.environ.get("SECRET_KEY", "INSECURE")
 DEBUG = True if os.environ.get("DEBUG") == '1' else False
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+
 
 # Application definition
 INSTALLED_APPS = [
@@ -115,11 +117,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Customized User model
 AUTH_USER_MODEL = 'userauths.User'
 
+
 CORS_ORIGIN_ALLOW_ALL = True
 # CORS_ORIGIN_WHITELIST = (
 #     'localhost:8000',
 #     '127.0.0.1:9000'
 # )
+
+FRONTEND_SERVER_URL = os.environ.get("FRONTEND_SERVER_URL")
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'local_static')]
@@ -140,18 +145,15 @@ MESSAGE_TAGS ={
 }
 
 
-EMAIL_HOST_USER = str(os.getenv('EMAIL_HOST_USER'))
-EMAIL_HOST_PASSWORD = str(os.getenv('EMAIL_HOST_PASSWORD'))
-EMAIL_USE_TLS = str(os.getenv('EMAIL_USE_TLS'))
-EMAIL_PORT = str(os.getenv('EMAIL_PORT'))
-EMAIL_HOST = str(os.getenv('EMAIL_HOST'))
-
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+EMAIL_USE_TLS = bool(os.environ.get('EMAIL_USE_TLS', True))
+EMAIL_PORT = int(os.environ.get('EMAIL_PORT', '587'))
+EMAIL_HOST = os.environ.get('EMAIL_HOST', '')
 
 # django toolbar
 INTERNAL_IPS = [
-    # ...
     "127.0.0.1",
-    # ...
 ]
 
 
@@ -214,3 +216,4 @@ SIMPLE_JWT = {
 #         ),
 #     }
 # }
+
