@@ -1,20 +1,23 @@
+import math
+import random
+from . import utils
 from decimal import Decimal
+from django.conf import settings
 from apps.userauths.models import User
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
-
-from .models import Product, Category, Cart, CartOrder, CartOrderItem, Tax, Coupon
+from .serializers import CouponSerializer, NotificationSerializer
+from .models import Product, Category, Cart, CartOrder, CartOrderItem, Tax, Coupon, Notification
 from .serializers import ProductSerializer, CategorySerializer, CartSerializer, CartOrderSerializer, CartOrderItemSerializer
-from .serializers import CouponSerializer
-from django.conf import settings
-from . import utils
-import random
-import math
-from django.shortcuts import redirect
 
-import stripe
-stripe.api_key = "<api-key>"
+def send_notification(user=None, vendor=None, order=None, order_item=None):
+    Notification.objects.create(
+        user=user,
+        vendor=vendor,
+        order=order,
+        order_item=order_item
+    )
 
 
 class CategoryListAPIView(generics.ListAPIView):
@@ -305,18 +308,27 @@ class StripeCheckoutView(generics.CreateAPIView):
         except:
             order = None
             return Response({"status":"error", "message":"Está ordem de compra não foi encontrada!"}, status=status.HTTP_404_NOT_FOUND)
+        
+        order_items = CartOrderItem.objects.filter(order=order)
 
         # Payment Simulation
-        chance = math.floor(random.random()*2) % 2 
-        utils.print_debug(chance)
+        chance = 1
+        # chance = math.floor(random.random()*2) % 2 
+        # utils.print_debug(chance)
         session_id =utils.generate_session_id()
         order.stripe_session_id = session_id
         if chance:
             if order.payment_status =="initiated":
-                # success_url = f'{settings.FRONTEND_SERVER_URL}/checkout/payment-success/{order.oid}?session_id={session_id}',
                 order.payment_status='paid'
                 order.save()
-                # Send notification do vendor, email do customer, email do vendor
+                # Send notification do customer
+                if order.buyer is not None:
+                    send_notification(user=order.buyer, order=order)
+                
+                #Send notification to vendor
+                for item in order_items:
+                    send_notification(vendor=item.vendor, order=order, order_item=item)
+
                 return Response({'status':"success",'message':'pagamento realizado com sucesso!', 'data':{'session_id':session_id, 'order_oid':order_oid}})
             else:
                 return Response({'status':"warning",'message':'O pagamento desta compra já foi realizado!', 'data':{'session_id':session_id, 'order_oid':order_oid}})
@@ -325,25 +337,5 @@ class StripeCheckoutView(generics.CreateAPIView):
             order.payment_status='cancelled'
             order.save()
             return Response({'status':"error", 'data':{'session_id':session_id, 'order_oid':order_oid}})
-        
-        # checkout_session = stripe.checkout.Session.create(
-        #     customer_email = order.email,
-        #     payment_method_types = ['card'],
-        #     line_items = [
-        #         {
-        #             'price_data':{
-        #                 'currency':'usd',
-        #                 'product_data':{
-        #                     'name':order.full_name
-        #                 },
-        #                 'unit_amount':int(order.total*100)
-        #             },
-        #             'quantity':1,
-        #         }
-        #     ],
-        #     mode='payment',
-        #     success_url=f'http://localhost:5173/checkout/payment-success/{order.oid}' + '?session_id={CHECKOUT_SESSION_ID}',
-        #     cancel_url='http://localhost:5173/checkout/payment-failed/?session_id={CHECKOUT_SESSION_ID}',
-        # )
 
     
