@@ -312,15 +312,17 @@ class StripeCheckoutView(generics.CreateAPIView):
         session_id =utils.generate_session_id()
         order.stripe_session_id = session_id
         if chance:
-            # success_url = f'{settings.FRONTEND_SERVER_URL}/checkout/payment-success/{order.oid}?session_id={session_id}',
-            order.payment_status='PAGO'
-            order.save()
-
-            # Send notification do vendor, email do customer, email do vendor
-            return Response({'status':"success", 'data':{'session_id':session_id, 'order_oid':order_oid}})
+            if order.payment_status =="initiated":
+                # success_url = f'{settings.FRONTEND_SERVER_URL}/checkout/payment-success/{order.oid}?session_id={session_id}',
+                order.payment_status='paid'
+                order.save()
+                # Send notification do vendor, email do customer, email do vendor
+                return Response({'status':"success",'message':'pagamento realizado com sucesso!', 'data':{'session_id':session_id, 'order_oid':order_oid}})
+            else:
+                return Response({'status':"warning",'message':'O pagamento desta compra já foi realizado!', 'data':{'session_id':session_id, 'order_oid':order_oid}})
         else:
             # cancel_url= f'{settings.FRONTEND_SERVER_URL}/checkout/payment-failed/{order.oid}?session_id={session_id}'
-            order.payment_status='CANCELADO'
+            order.payment_status='cancelled'
             order.save()
             return Response({'status':"error", 'data':{'session_id':session_id, 'order_oid':order_oid}})
         

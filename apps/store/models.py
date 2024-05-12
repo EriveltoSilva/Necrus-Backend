@@ -1,13 +1,47 @@
 import uuid
 from django.db import models
-from django.urls import reverse
+from django.dispatch import receiver
 from django.utils.text import slugify
 from apps.vendor.models import Vendor
-from apps.userauths.models import User, Profile
-from django.dispatch import receiver
 from django.db.models.signals import post_save
+from apps.userauths.models import User, Profile
 
-# id = models.UUIDField(primary_key=True,default=uuid.uuid4, unique=True, editable=False)
+
+PRODUCT_STATUS = (
+    ("draft", "Draft"),
+    ("disabled", "Disabled"),
+    ("rejected", "Rejected"),
+    ("in_review", "In Review"),
+    ("published", "Published"),
+)
+
+PAYMENT_STATUS = (
+    ("paid", "Paid"),
+    ("pending", "Pending"),
+    ("processing", "Processing"),
+    ("cancelled", "Cancelled"),
+    ("initiated", 'Initiated'),
+    ("failed", 'failed'),
+    ("refunding", 'refunding'),
+    ("refunded", 'refunded'),
+    ("unpaid", 'unpaid'),
+    ("expired", 'expired'),
+)
+
+ORDER_STATUS = (
+    ("Pending", "Pending"),
+    ("Fulfilled", "Fulfilled"),
+    ("Partially Fulfilled", "Partially Fulfilled"),
+    ("Cancelled", "Cancelled"),
+)
+
+PRODUCT_REVIEW_RATING = (
+    ( 1,  "★☆☆☆☆"),
+    ( 2,  "★★☆☆☆"),
+    ( 3,  "★★★☆☆"),
+    ( 4,  "★★★★☆"),
+    ( 5,  "★★★★★"),
+)
 
 class Category(models.Model):
     cid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
@@ -31,28 +65,8 @@ class Category(models.Model):
     def __str__(self) -> str:
         return f"{self.title}"
     
-    # def get_absolute_url(self):
-    #     return reverse("ecommerce:product-category",args=(self.slug,))
-#     def get_absolute_url(self):
-#         return reverse("ecommerce:product-category",args=(self.slug,))
-
-#     @property
-#     def get_imageURL(self):
-#         try:
-#             url = self.image.url
-#         except ValueError as e:
-#             print("## ERRO CARREGANDO A IMAGEM da CATEGORIA:", self.__str__())
-#             url = ''
-#         return url
 
 class Product(models.Model):
-    STATUS = (
-        ('PLANEJADO','PLANEJADO'),
-        ('DESABILITADO','DESABILITADO'),
-        ('EM_REVISAO','EM REVISÃO'),
-        ('PUBLICADO','PUBLICADO'),
-        )
-
     pid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     title = models.CharField(max_length=200, unique=True)
     slug = models.SlugField(unique=True)
@@ -65,7 +79,7 @@ class Product(models.Model):
     stock_quantity = models.PositiveIntegerField(default=1)
     is_active = models.BooleanField(default=True)
     in_stock = models.BooleanField(default=True)
-    status = models.CharField(max_length=30,choices=STATUS, default="PUBLICADO")
+    status = models.CharField(max_length=30,choices=PRODUCT_STATUS, default="published")
     featured = models.BooleanField(default=False)
     views = models.PositiveIntegerField(default=0)
     rating = models.PositiveIntegerField(default=0)
@@ -90,8 +104,6 @@ class Product(models.Model):
     def __str__(self) -> str:
         return self.title 
     
-    # def get_absolute_url(self):
-    #     return reverse("ecommerce:detail",args=(self.slug,))
 
     @property
     def get_imageURL(self) -> str:
@@ -235,13 +247,6 @@ class Cart(models.Model):
         return f"{self.cart_id} - {self.product} - {self.user}"
     
 class CartOrder(models.Model):
-    PAYMENT_STATUS = (
-        ("PAGO", "PAGO"), ("PENDENTE", "PENDENTE"), ("PROCESSANDO", "PROCESSANDO"),
-        ("CANCELADO", "CANCELADO"), ("ENVIADO", "ENVIADO"),("ENTREGUE", "ENTREGUE"),
-    )   
-    ORDER_STATUS = (
-        ("PENDENTE", "PENDENTE"), ("REALIZADA", "REALIZADA"), ("CANCELADA", "CANCELADA"),
-    )   
     oid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     vendor = models.ManyToManyField(Vendor)
     buyer = models.ForeignKey(to=User, on_delete=models.SET_NULL, null=True, blank=True)
@@ -252,8 +257,8 @@ class CartOrder(models.Model):
     tax_fee = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
     total = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
 
-    payment_status = models.CharField(max_length=30, choices=PAYMENT_STATUS, default="PENDENTE")
-    order_status = models.CharField(max_length=20, choices=ORDER_STATUS, default="PENDENTE")
+    payment_status = models.CharField(max_length=30, choices=PAYMENT_STATUS, default="initiated")
+    order_status = models.CharField(max_length=20, choices=ORDER_STATUS, default="pending")
 
     #Stripe
     stripe_session_id = models.CharField(max_length=255, null=True, blank=True)
@@ -289,8 +294,6 @@ class CartOrder(models.Model):
 
 
 class CartOrderItem(models.Model):
-    ORDER_STATUS = (("PENDENTE", "PENDENTE"), ("REALIZADA", "REALIZADA"), ("CANCELADA", "CANCELADA"),)  
-
     oiid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     order = models.ForeignKey(to=CartOrder, on_delete=models.CASCADE)
     product = models.ForeignKey(to=Product, on_delete=models.CASCADE)
@@ -340,9 +343,6 @@ class ProductFaq(models.Model):
         return f"FAQ de:{self.user}, Produto:{self.product}"
     
 class Review(models.Model):
-    PRODUCT_REVIEW_RATING = ( (1, "★☆☆☆☆"), (2, "★★☆☆☆"), (3, "★★★☆☆"),
-    (4, "★★★★☆"), (5, "★★★★★"),)
-
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     product = models.ForeignKey(to=Product, on_delete=models.CASCADE)
     email = models.EmailField(null=True, blank=True)
