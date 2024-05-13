@@ -340,7 +340,7 @@ class StripeCheckoutView(generics.CreateAPIView):
 
     
 
-class ReviewListAPIView(generics.ListAPIView):
+class ReviewListAPIView(generics.ListCreateAPIView):
     serializer_class = ReviewSerializer
     permission_classes = [AllowAny]
 
@@ -349,3 +349,22 @@ class ReviewListAPIView(generics.ListAPIView):
         product = Product.objects.get(id=product_id)
         reviews = Review.objects.filter(product=product)
         return reviews
+
+    def create(self, request, *args, **kwargs):
+        payload = request.data
+
+        user_id = int(payload.get('user_id'))
+        product_id = int(payload.get('product_id'))
+        rating  = payload.get('rating')
+        review = payload.get('review')
+
+        user = User.objects.get(id=user_id)
+        product = Product.objects.get(id=product_id)
+
+        Review.objects.create(
+            user=user,
+            product=product,
+            rating=rating,
+            review=review
+        )
+        return Response({"status":"success", "message":"Avaliação criada com sucesso!"}, status=status.HTTP_201_CREATED)
