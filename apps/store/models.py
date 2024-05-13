@@ -12,6 +12,7 @@ PRODUCT_STATUS = (
     ("disabled", "Disabled"),
     ("rejected", "Rejected"),
     ("in_review", "In Review"),
+    ("in_highlight", "In Highlight"),
     ("published", "Published"),
 )
 

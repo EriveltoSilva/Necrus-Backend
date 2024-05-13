@@ -1,6 +1,8 @@
 import math
 import random
 from . import utils
+from django.utils import timezone
+from datetime import timedelta
 from decimal import Decimal
 from django.db.models import Q
 from django.conf import settings
@@ -39,6 +41,30 @@ class ProductListAPIView(generics.ListAPIView):
     queryset = Product.objects.filter(is_active=True)
     serializer_class = ProductSerializer
     permission_classes = [AllowAny]
+
+class NewProductListAPIView(generics.ListAPIView):
+    queryset = Product.objects.filter()
+    serializer_class = ProductSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        today = timezone.localdate()                            # Obtém a data de hoje
+        start_of_week = today - timedelta(days=today.weekday()) # Encontra o primeiro dia (domingo) da semana atual
+        end_of_week = start_of_week + timedelta(days=6)         # Encontra o último dia (sábado) da semana atual
+        # Filtra os produtos criados esta semana
+        products = Product.objects.filter(is_active=True).filter(created_at__range=[start_of_week, end_of_week])
+        if not products.exists():
+            products = Product.objects.filter(is_active=True)
+        return products
+
+class HighlightProductListAPIView(generics.ListAPIView):
+    queryset = Product.objects.filter()
+    serializer_class = ProductSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        products = Product.objects.filter(is_active=True).filter(status='in_highlight')
+        return products
 
 class ProductDetailAPIView(generics.RetrieveAPIView):
     queryset = Product.objects.filter(is_active=True)

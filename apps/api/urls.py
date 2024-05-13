@@ -19,6 +19,8 @@ urlpatterns = [
     path('search/', store_views.SearchProductAPIView.as_view()),
     path('categories/', store_views.CategoryListAPIView.as_view()),    
     path('products/', store_views.ProductListAPIView.as_view()),    
+    path('new-products/', store_views.NewProductListAPIView.as_view()),    
+    path('highlight-products/', store_views.HighlightProductListAPIView.as_view()),    
     path('products/detail/<slug:slug>/', store_views.ProductDetailAPIView.as_view()),
     path('reviews/<int:product_id>/', store_views.ReviewListAPIView.as_view()),
 
