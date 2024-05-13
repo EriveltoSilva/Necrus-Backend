@@ -4,6 +4,8 @@ from django.urls import path, include
 from apps.userauths import views as userauths_views
 from rest_framework_simplejwt.views import TokenRefreshView
 from apps.store import views as store_views
+from apps.customer import views as customer_views
+
 urlpatterns = [
     # User Authentication Endpoints
     path('user/token/', userauths_views.MyTokenObtainPairView.as_view()),    
@@ -13,9 +15,11 @@ urlpatterns = [
     path('user/password-change/', userauths_views.PasswordChangeView.as_view(), name="password_change"),    
 
     # Store Endpoints
+    path('search/', store_views.SearchProductAPIView.as_view()),
     path('categories/', store_views.CategoryListAPIView.as_view()),    
     path('products/', store_views.ProductListAPIView.as_view()),    
     path('products/detail/<slug:slug>/', store_views.ProductDetailAPIView.as_view()),
+    path('reviews/<int:product_id>/', store_views.ReviewListAPIView.as_view()),
 
     # Cart Endpoints
     path('cart/', store_views.CartAPIView.as_view()),    
@@ -34,8 +38,11 @@ urlpatterns = [
     # Payment Endpoints
     path('stripe-checkout/<uuid:order_oid>/', store_views.StripeCheckoutView.as_view()),
 
+    # Customers Endpoints
+    path('customer/order/<int:user_id>/', customer_views.OrdersAPIView.as_view()),
+    path('customer/order/<int:user_id>/<str:order_oid>/', customer_views.OrderDetailAPIView.as_view()),
+
+
     
-    path('reviews/<int:product_id>/', store_views.ReviewListAPIView.as_view()),
-    path('search/', store_views.SearchProductAPIView.as_view()),
 
 ]
