@@ -292,7 +292,6 @@ class CartOrder(models.Model):
     def order_items(self):
         return CartOrderItem.objects.filter(order=self)
 
-
 class CartOrderItem(models.Model):
     oiid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     order = models.ForeignKey(to=CartOrder, on_delete=models.CASCADE)

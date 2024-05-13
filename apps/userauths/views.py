@@ -4,7 +4,7 @@ from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .serializers import MyTokenObtainPairSerializer, RegisterSerializer, UserSerializer
+from .serializers import MyTokenObtainPairSerializer, RegisterSerializer, UserSerializer, ProfileSerializer
 from . import utils
 
 class MyTokenObtainPairView(TokenObtainPairView):
@@ -63,3 +63,13 @@ class PasswordChangeView(generics.CreateAPIView):
             return Response( {"status":"success","message": "Palavra-Passe alterada com Sucesso"}, status=status.HTTP_201_CREATED)
         else:
             return Response( {"status":"error","message": "Ocorreu um erro ao alterar a palavra-passe"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class ProfileDetailView(generics.RetrieveAPIView):
+    serializer_class = ProfileSerializer
+    permission_classes = [AllowAny]
+
+    def get_object(self, *args, **kwargs):
+        user_id = self.kwargs.get('user_id')
+        user = User.objects.get(id=user_id)
+        return Profile.objects.get(user=user)

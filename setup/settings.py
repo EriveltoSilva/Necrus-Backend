@@ -77,12 +77,16 @@ WSGI_APPLICATION = 'setup.wsgi.application'
 
 DATABASES = {
     'default': {
-    'ENGINE': os.environ.get('DATABASE_ENGINE'),
-    'NAME': os.environ.get('DATABASE_NAME'),
-    'USER': os.environ.get('DATABASE_USER'),
-    'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
-    'HOST': os.environ.get('DATABASE_HOST'),
-    'PORT':os.environ.get('DATABASE_PORT'),
+        'ENGINE': os.environ.get('DATABASE_ENGINE'),
+        'NAME': os.environ.get('DATABASE_NAME'),
+        'USER': os.environ.get('DATABASE_USER'),
+        'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
+        'HOST': os.environ.get('DATABASE_HOST'),
+        'PORT':os.environ.get('DATABASE_PORT'),
+        'OPTIONS': {
+            'charset': os.environ.get('DATABASE_CHARSET'),
+            'init_command': os.environ.get('DATABASE_INIT_COMMAND'),
+        }
     }
 }
 
@@ -158,11 +162,16 @@ INTERNAL_IPS = [
 
 
 # https://django-jazzmin.readthedocs.io/
+
+
 JAZZMIN_SETTINGS = {
     'site_title': "Necrus",
     'site_header':"Necrus",
     'site_brand':"Necrus",
-    'welcome_sign':"Seja Bem Vindo a Necrus",
+    "site_logo": "assets/img/logo/logo.png",
+    "login_logo": "assets/img/logo/logo.png",
+    "site_icon": "assets/img/logo/logo.png",
+    "welcome_sign": "Bem Vindo a Administração da Necrus",
     'copyright':"Necrus",
     'show_sidebar':True,
     'show_ui_builder':True,

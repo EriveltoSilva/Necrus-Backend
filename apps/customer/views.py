@@ -33,7 +33,4 @@ class OrderDetailAPIView(generics.RetrieveAPIView):
         user = User.objects.get(id=user_id)
         order = CartOrder.objects.get(buyer=user, oid=order_oid, payment_status='paid')
         return order
-
-        
-        
-        return super().get_object()
+    

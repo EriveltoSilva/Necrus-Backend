@@ -13,6 +13,7 @@ urlpatterns = [
     path('user/register/', userauths_views.RegisterView.as_view()),    
     path('user/password-reset/<str:email>/', userauths_views.PasswordResetEmailVerifyView.as_view()),    
     path('user/password-change/', userauths_views.PasswordChangeView.as_view(), name="password_change"),    
+    path('customer/profile/<int:user_id>/', userauths_views.ProfileDetailView.as_view()),
 
     # Store Endpoints
     path('search/', store_views.SearchProductAPIView.as_view()),
@@ -41,6 +42,7 @@ urlpatterns = [
     # Customers Endpoints
     path('customer/order/<int:user_id>/', customer_views.OrdersAPIView.as_view()),
     path('customer/order/<int:user_id>/<str:order_oid>/', customer_views.OrderDetailAPIView.as_view()),
+
 
 
     
