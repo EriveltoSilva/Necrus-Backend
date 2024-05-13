@@ -1,6 +1,16 @@
 from django.contrib import admin
 from .models import Category, Product, Gallery, Specification, Size, Color, Cart, CartOrder, CartOrderItem
-from .models import ProductFaq, Review, Wishlist,Notification, Coupon, Tax
+from .models import ProductFaq, Review, Wishlist,Notification, Coupon, Tax, Banner
+
+
+class BannerAdmin(admin.ModelAdmin):
+   list_display = ['id', 'title', 'image']
+   list_display_links = ['id', 'title', 'image']
+   list_filter = ['title']
+   search_fields = ['title', 'image']
+   list_per_page = 25
+admin.site.register(Banner, BannerAdmin)
+
 
 
 class TaxAdmin(admin.ModelAdmin):

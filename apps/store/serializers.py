@@ -1,10 +1,15 @@
 from rest_framework import serializers
 from apps.userauths.serializers import ProfileSerializer
 
-from .models import Category, Product, Gallery, Specification, Size, Color
+from .models import Category, Product, Gallery, Specification, Size, Color, Banner
 from .models import Cart, CartOrder, CartOrderItem, ProductFaq, Review, Wishlist, Notification, Coupon
 
 from apps.vendor.serializers import VendorSerializer
+
+class BannerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Banner
+        fields = '__all__'
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:

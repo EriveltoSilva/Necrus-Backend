@@ -7,6 +7,9 @@ from apps.store import views as store_views
 from apps.customer import views as customer_views
 
 urlpatterns = [
+    path('banner-images/', store_views.BannerAPIView.as_view()),    
+
+
     # User Authentication Endpoints
     path('user/token/', userauths_views.MyTokenObtainPairView.as_view()),    
     path('user/token/refresh', TokenRefreshView.as_view()),    

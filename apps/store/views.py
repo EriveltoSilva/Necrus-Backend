@@ -4,14 +4,14 @@ from . import utils
 from django.utils import timezone
 from datetime import timedelta
 from decimal import Decimal
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.conf import settings
 from apps.userauths.models import User
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from .serializers import CouponSerializer, NotificationSerializer, ReviewSerializer
-from .models import Product, Category, Cart, CartOrder, CartOrderItem, Tax, Coupon, Notification, Review, Wishlist
+from .serializers import CouponSerializer, NotificationSerializer, ReviewSerializer, BannerSerializer
+from .models import Product, Category, Cart, CartOrder, CartOrderItem, Tax, Coupon, Notification, Review, Wishlist, Banner
 from .serializers import ProductSerializer, CategorySerializer, CartSerializer, CartOrderSerializer, CartOrderItemSerializer
 
 def send_notification(user=None, vendor=None, order=None, order_item=None):
@@ -28,6 +28,10 @@ class CategoryListAPIView(generics.ListAPIView):
     serializer_class = CategorySerializer
     permission_classes = [AllowAny]
 
+    def get_queryset(self):
+        categories = Category.objects.filter(is_active=True)
+        return categories
+    
 class CategoryDetailAPIView(generics.RetrieveAPIView):
     queryset = Category.objects.filter(is_active=True)
     serializer_class = CategorySerializer
@@ -142,9 +146,9 @@ class CartListAPIView(generics.ListAPIView):
 
         if user_id is not None:
             user = User.objects.get(id=user_id)
-            queryset = Cart.objects.filter(user=user, cart_id=cart_id)
+            queryset = Cart.objects.filter(user=user, cart_id=cart_id).filter(status='carted')
         else:
-            queryset = Cart.objects.filter(cart_id=cart_id)
+            queryset = Cart.objects.filter(cart_id=cart_id).filter(status='carted')
         return queryset
     
 class CartDetailView(generics.RetrieveAPIView):
@@ -363,6 +367,8 @@ class StripeCheckoutView(generics.CreateAPIView):
                 
                 #Send notification to vendor
                 for item in order_items:
+                    item.status='ordered'
+                    item.save()
                     send_notification(vendor=item.vendor, order=order, order_item=item)
 
                 return Response({'status':"success",'message':'pagamento realizado com sucesso!', 'data':{'session_id':session_id, 'order_oid':order_oid}})
@@ -412,6 +418,10 @@ class SearchProductAPIView(generics.ListAPIView):
 
     def get_queryset(self, *args, **kwargs):
         query = self.request.GET.get("query")
-        products = Product.objects.filter(status="published").filter(Q(Q(description__icontains=query) | Q(category__title__icontains=query)))
+        products = Product.objects.filter(Q(Q(title__icontains=query) | Q(description__icontains=query)) | (Q(Q(description__icontains=query) | Q(category__title__icontains=query))))
         return products
     
+class BannerAPIView(generics.ListAPIView):
+    serializer_class = BannerSerializer
+    permission_classes = [AllowAny]
+    queryset = Banner.objects.all()

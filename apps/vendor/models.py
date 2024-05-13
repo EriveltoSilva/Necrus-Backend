@@ -6,7 +6,7 @@ from apps.userauths.models import User, Profile
 class Vendor(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100, help_text="Nome da Loja", null=True, blank=True)
-    slug = models.SlugField(unique=True, max_length=500)
+    slug = models.SlugField(unique=True, max_length=250)
     image = models.ImageField(upload_to="vendors", default="default/default-user.png", null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     phone = models.CharField(max_length=20, help_text="Telefone da loja", null=True, blank=True)

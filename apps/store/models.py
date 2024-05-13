@@ -6,6 +6,10 @@ from apps.vendor.models import Vendor
 from django.db.models.signals import post_save
 from apps.userauths.models import User, Profile
 
+CART_STATUS=(
+    ("carted", "In Cart"),
+    ("ordered", "Ordered"),
+)
 
 PRODUCT_STATUS = (
     ("draft", "Draft"),
@@ -73,7 +77,7 @@ class Product(models.Model):
     slug = models.SlugField(unique=True)
     image = models.ImageField(upload_to="products",default='defaults/product.png', null=True, blank=True)
     description = models.TextField(null=True, blank=True)
-    category = models.ForeignKey(to=Category, on_delete=models.SET_NULL, null=True, blank=True)
+    category = models.ForeignKey(to=Category, on_delete=models.SET_NULL, null=True, blank=True, related_name='product')
     price = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
     old_price = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
     shipping_amount = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
@@ -239,6 +243,7 @@ class Cart(models.Model):
     
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    status = models.CharField(max_length=255, choices=CART_STATUS, default='carted')
 
     class Meta:
         verbose_name_plural = "Carrinhos"
@@ -419,3 +424,13 @@ class Tax(models.Model):
     
     def __str__(self) -> str:
         return f"{self.country} - {self.rate}"
+    
+class Banner(models.Model):
+    title = models.CharField(max_length=100, null=True, blank=True)
+    image = models.FileField(upload_to="categories", default="defaults/category.png", null=True, blank=True)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f'{self.image}'
