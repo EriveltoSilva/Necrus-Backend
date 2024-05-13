@@ -7,8 +7,8 @@ from apps.userauths.models import User
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from .serializers import CouponSerializer, NotificationSerializer
-from .models import Product, Category, Cart, CartOrder, CartOrderItem, Tax, Coupon, Notification
+from .serializers import CouponSerializer, NotificationSerializer, ReviewSerializer
+from .models import Product, Category, Cart, CartOrder, CartOrderItem, Tax, Coupon, Notification, Review, Wishlist
 from .serializers import ProductSerializer, CategorySerializer, CartSerializer, CartOrderSerializer, CartOrderItemSerializer
 
 def send_notification(user=None, vendor=None, order=None, order_item=None):
@@ -339,3 +339,13 @@ class StripeCheckoutView(generics.CreateAPIView):
             return Response({'status':"error", 'data':{'session_id':session_id, 'order_oid':order_oid}})
 
     
+
+class ReviewListAPIView(generics.ListAPIView):
+    serializer_class = ReviewSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self, *args, **kwargs):
+        product_id = self.kwargs.get('product_id')
+        product = Product.objects.get(id=product_id)
+        reviews = Review.objects.filter(product=product)
+        return reviews
