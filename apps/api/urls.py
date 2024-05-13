@@ -36,5 +36,6 @@ urlpatterns = [
 
     
     path('reviews/<int:product_id>/', store_views.ReviewListAPIView.as_view()),
+    path('search/', store_views.SearchProductAPIView.as_view()),
 
 ]

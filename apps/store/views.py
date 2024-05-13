@@ -2,6 +2,7 @@ import math
 import random
 from . import utils
 from decimal import Decimal
+from django.db.models import Q
 from django.conf import settings
 from apps.userauths.models import User
 from rest_framework import generics, status
@@ -338,8 +339,6 @@ class StripeCheckoutView(generics.CreateAPIView):
             order.save()
             return Response({'status':"error", 'data':{'session_id':session_id, 'order_oid':order_oid}})
 
-    
-
 class ReviewListAPIView(generics.ListCreateAPIView):
     serializer_class = ReviewSerializer
     permission_classes = [AllowAny]
@@ -371,3 +370,13 @@ class ReviewListAPIView(generics.ListCreateAPIView):
             review=review
         )
         return Response({"status":"success", "message":"Avaliação criada com sucesso ⭐!"}, status=status.HTTP_201_CREATED)
+
+class SearchProductAPIView(generics.ListAPIView):
+    serializer_class = ProductSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self, *args, **kwargs):
+        query = self.request.GET.get("query")
+        products = Product.objects.filter(status="published").filter(Q(Q(description__icontains=query) | Q(category__title__icontains=query)))
+        return products
+    
