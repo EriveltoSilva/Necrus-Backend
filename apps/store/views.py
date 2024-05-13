@@ -361,10 +361,13 @@ class ReviewListAPIView(generics.ListCreateAPIView):
         user = User.objects.get(id=user_id)
         product = Product.objects.get(id=product_id)
 
+        # if Review.objects.filter(user=user, product=product).exists():
+        #     return Response({'status':"error", 'message':'Você já fez uma avaliação para este produto!'}, status=status.HTTP_208_ALREADY_REPORTED)
+        
         Review.objects.create(
             user=user,
             product=product,
             rating=rating,
             review=review
         )
-        return Response({"status":"success", "message":"Avaliação criada com sucesso!"}, status=status.HTTP_201_CREATED)
+        return Response({"status":"success", "message":"Avaliação criada com sucesso ⭐!"}, status=status.HTTP_201_CREATED)
