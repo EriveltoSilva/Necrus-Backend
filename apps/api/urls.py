@@ -23,6 +23,7 @@ urlpatterns = [
     path('highlight-products/', store_views.HighlightProductListAPIView.as_view()),    
     path('products/detail/<slug:slug>/', store_views.ProductDetailAPIView.as_view()),
     path('reviews/<int:product_id>/', store_views.ReviewListAPIView.as_view()),
+    path('products/category/<slug:slug>/', store_views.ProductByCategoryListAPIView.as_view()),
 
     # Cart Endpoints
     path('cart/', store_views.CartAPIView.as_view()),    

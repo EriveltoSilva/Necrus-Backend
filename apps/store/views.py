@@ -57,6 +57,16 @@ class NewProductListAPIView(generics.ListAPIView):
             products = Product.objects.filter(is_active=True)
         return products
 
+class ProductByCategoryListAPIView(generics.ListAPIView):
+    serializer_class = ProductSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self, *args, **kwargs):
+        slug = self.kwargs.get('slug')
+        category = Category.objects.get(slug=slug)
+        products = Product.objects.filter(is_active=True, category=category)
+        return products
+
 class HighlightProductListAPIView(generics.ListAPIView):
     queryset = Product.objects.filter()
     serializer_class = ProductSerializer
@@ -321,7 +331,6 @@ class CouponAPIView(generics.ListCreateAPIView):
                 return Response({"status":"info", "message":"Não existem item nesse carrinho!"}, status=status.HTTP_200_OK)
         else:
             return Response({"status":"error", "message":"Este cupom não existe!"}, status=status.HTTP_200_OK)
-
 
 class StripeCheckoutView(generics.CreateAPIView):
     serializer_class = CartOrderSerializer
